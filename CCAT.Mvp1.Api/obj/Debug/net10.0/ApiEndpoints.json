@@ -1,0 +1,18 @@
+[
+  {
+    "ContainingType": "CCAT.Mvp1.Api.Controllers.UsuariosController",
+    "Method": "Crear",
+    "RelativePath": "api/Usuarios",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "CCAT.Mvp1.Api.DTOs.Usuarios.UsuarioCrearRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
