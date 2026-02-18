@@ -1,22 +1,22 @@
-﻿using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using CCAT.Mvp1.Api.Interfaces;
 
 namespace CCAT.Mvp1.Api.Repositories;
 
 public class SqlConnectionFactory : IDbConnectionFactory
 {
-    private readonly IConfiguration _config;
+    private readonly string _connectionString;
 
-    public SqlConnectionFactory(IConfiguration config)
+    public SqlConnectionFactory(IConfiguration configuration)
     {
-        _config = config;
+        _connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new Exception("No existe DefaultConnection en appsettings.");
     }
 
-    public IDbConnection CreateConnection()
+    public SqlConnection CreateConnection()
     {
-        return new SqlConnection(
-            _config.GetConnectionString("DefaultConnection")
-        );
+        var cn = new SqlConnection(_connectionString);
+        cn.Open();
+        return cn;
     }
 }

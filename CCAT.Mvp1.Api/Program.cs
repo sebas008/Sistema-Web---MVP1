@@ -5,18 +5,50 @@ using CCAT.Mvp1.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// =====================
+// Core
+// =====================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// DI (orden importante)
+// =====================
+// Dependency Injection
+// =====================
+
+// DB
 builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
+
+// Usuarios
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
+// Productos
+builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+builder.Services.AddScoped<IProductoService, ProductoService>();
+
+//Auth
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+//Inventario Repuestos
+builder.Services.AddScoped<IInventarioRepuestoRepository, InventarioRepuestoRepository>();
+builder.Services.AddScoped<IInventarioRepuestoService, InventarioRepuestoService>();
+
+//Nuevos Vehículos Nuevos
+builder.Services.AddScoped<IVehiculoNuevoRepository, VehiculoNuevoRepository>();
+builder.Services.AddScoped<IVehiculoNuevoService, VehiculoNuevoService>();
+
+// =====================
+// App
+// =====================
 var app = builder.Build();
 
-// Middleware global de errores (recomendado)
+// =====================
+// Middleware
+// =====================
+
+// Manejo global de errores
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -26,5 +58,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();

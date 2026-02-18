@@ -1,13 +1,17 @@
-# Visual Studio
+## Visual Studio
 .vs/
 bin/
 obj/
 
-# NuGet (si usas packages.config)
-packages/
-
-# User-specific files
+## User-specific files
 *.user
 *.suo
-*.cache
+*.userosscache
+*.sln.docstates
+
+## Cache
+*.dbcache
+*.dbcache.v2
+
+## Logs
 *.log

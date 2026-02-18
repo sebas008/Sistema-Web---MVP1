@@ -2,5 +2,6 @@
 
 public class UsuarioAsignarRolRequest
 {
-    public string RolNombre { get; set; } = "";
+    public string CsvRoles { get; set; } = ""; // ejemplo: "1,2"
+    public string Usuario { get; set; } = "admin";
 }

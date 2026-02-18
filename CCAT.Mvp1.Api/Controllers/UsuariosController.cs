@@ -12,8 +12,11 @@ public class UsuariosController : ControllerBase
     public UsuariosController(IUsuarioService service) => _service = service;
 
     [HttpPost]
-    public Task<UsuarioResponse> Crear([FromBody] UsuarioCrearRequest req)
-        => _service.CrearAsync(req);
+    public async Task<IActionResult> Crear([FromBody] UsuarioCrearRequest req)
+    {
+        var u = await _service.CrearAsync(req);
+        return CreatedAtAction(nameof(ObtenerPorId), new { id = u.IdUsuario }, u);
+    }
 
     [HttpGet]
     public Task<List<UsuarioResponse>> Listar([FromQuery] bool? activo, [FromQuery] string? q)
@@ -23,13 +26,6 @@ public class UsuariosController : ControllerBase
     public async Task<IActionResult> ObtenerPorId(int id)
     {
         var u = await _service.ObtenerPorIdAsync(id);
-        return u is null ? NotFound() : Ok(u);
-    }
-
-    [HttpGet("by-username/{username}")]
-    public async Task<IActionResult> ObtenerPorUsername(string username)
-    {
-        var u = await _service.ObtenerPorUsernamePublicAsync(username);
         return u is null ? NotFound() : Ok(u);
     }
 
@@ -48,6 +44,7 @@ public class UsuariosController : ControllerBase
         return Ok(new { ok = true });
     }
 
+    // POR STORE: seguridad.usp_UsuarioRol_Set espera CsvRoles (IDs)
     [HttpPatch("{id:int}/rol")]
     public async Task<IActionResult> AsignarRol(int id, [FromBody] UsuarioAsignarRolRequest req)
     {

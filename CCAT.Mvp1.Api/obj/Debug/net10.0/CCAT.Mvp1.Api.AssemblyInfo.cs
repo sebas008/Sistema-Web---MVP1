@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CCAT.Mvp1.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3407d8a2b72f280c52f6a74da13b49c24e2e2a23")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+63cf3fd3d1ab27fddf1e7a2b26b22dbc1e026c51")]
 [assembly: System.Reflection.AssemblyProductAttribute("CCAT.Mvp1.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CCAT.Mvp1.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

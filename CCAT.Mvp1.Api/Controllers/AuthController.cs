@@ -8,10 +8,14 @@ namespace CCAT.Mvp1.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IUsuarioService _service;
-    public AuthController(IUsuarioService service) => _service = service;
+    private readonly IAuthService _service;
+
+    public AuthController(IAuthService service)
+    {
+        _service = service;
+    }
 
     [HttpPost("login")]
-    public Task<LoginResponse> Login([FromBody] LoginDto req)
-        => _service.LoginAsync(req);
+    public Task<LoginResponse> Login([FromBody] LoginDto dto)
+        => _service.LoginAsync(dto);
 }

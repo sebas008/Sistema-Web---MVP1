@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using Dapper;
+using Microsoft.Data.SqlClient;
 using CCAT.Mvp1.Api.DTOs.Usuarios;
 using CCAT.Mvp1.Api.Entities;
 using CCAT.Mvp1.Api.Interfaces;
@@ -8,119 +8,191 @@ namespace CCAT.Mvp1.Api.Repositories;
 
 public class UsuarioRepository : IUsuarioRepository
 {
-    private readonly IDbConnectionFactory _factory;
-    public UsuarioRepository(IDbConnectionFactory factory) => _factory = factory;
+    private readonly IDbConnectionFactory _cnFactory;
 
-    public async Task<UsuarioResponse> CrearAsync(string username, string nombres, string apellidos, string? email,
-        byte[] passwordHash, byte[] passwordSalt, string? rolNombre)
+    public UsuarioRepository(IDbConnectionFactory cnFactory)
     {
-        using var cn = _factory.CreateConnection();
-
-        var p = new DynamicParameters();
-        p.Add("@Username", username);
-        p.Add("@Nombres", nombres);
-        p.Add("@Apellidos", apellidos);
-        p.Add("@Email", email);
-        p.Add("@PasswordHash", passwordHash, DbType.Binary, size: 64);
-        p.Add("@PasswordSalt", passwordSalt, DbType.Binary, size: 32);
-        p.Add("@RolNombre", rolNombre);
-
-        return await cn.QuerySingleAsync<UsuarioResponse>(
-            "seguridad.usp_Usuario_Crear",
-            p,
-            commandType: CommandType.StoredProcedure
-        );
+        _cnFactory = cnFactory;
     }
 
-    public async Task<Usuario?> ObtenerPorUsernameAsync(string username)
-    {
-        using var cn = _factory.CreateConnection();
+    // helper para DBNull sin problemas de ?? con string no-nullable
+    private static object DbOrNull(string? value) => string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
 
-        return await cn.QueryFirstOrDefaultAsync<Usuario>(
-            "seguridad.usp_Usuario_ObtenerPorUsername",
-            new { Username = username },
-            commandType: CommandType.StoredProcedure
-        );
+    public async Task<List<UsuarioResponse>> ListarAsync(bool? activo, string? q)
+    {
+        using var cn = _cnFactory.CreateConnection();
+        using var cmd = new SqlCommand("seguridad.usp_Usuario_List", cn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        cmd.Parameters.AddWithValue("@SoloActivos", (object?)activo ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@Q", DbOrNull(q));
+
+        var list = new List<UsuarioResponse>();
+        using var rd = await cmd.ExecuteReaderAsync();
+
+        while (await rd.ReadAsync())
+        {
+            list.Add(new UsuarioResponse
+            {
+                IdUsuario = rd.GetInt32(rd.GetOrdinal("IdUsuario")),
+                Username = rd.GetString(rd.GetOrdinal("Username")),
+                Email = rd.IsDBNull(rd.GetOrdinal("Email")) ? null : rd.GetString(rd.GetOrdinal("Email")),
+                Nombres = rd.IsDBNull(rd.GetOrdinal("Nombres")) ? "" : rd.GetString(rd.GetOrdinal("Nombres")),
+                Apellidos = rd.IsDBNull(rd.GetOrdinal("Apellidos")) ? "" : rd.GetString(rd.GetOrdinal("Apellidos")),
+                Activo = rd.GetBoolean(rd.GetOrdinal("Activo")),
+                Roles = new List<Rol>() // en listado no traemos roles
+            });
+        }
+
+        return list;
     }
 
     public async Task<UsuarioResponse?> ObtenerPorIdAsync(int usuarioId)
     {
-        using var cn = _factory.CreateConnection();
+        using var cn = _cnFactory.CreateConnection();
+        using var cmd = new SqlCommand("seguridad.usp_Usuario_Get", cn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
 
-        return await cn.QueryFirstOrDefaultAsync<UsuarioResponse>(
-            "seguridad.usp_Usuario_ObtenerPorId",
-            new { UsuarioId = usuarioId },
-            commandType: CommandType.StoredProcedure
-        );
+        cmd.Parameters.AddWithValue("@IdUsuario", usuarioId);
+
+        using var rd = await cmd.ExecuteReaderAsync();
+        if (!await rd.ReadAsync()) return null;
+
+        var u = new UsuarioResponse
+        {
+            IdUsuario = rd.GetInt32(rd.GetOrdinal("IdUsuario")),
+            Username = rd.GetString(rd.GetOrdinal("Username")),
+            Email = rd.IsDBNull(rd.GetOrdinal("Email")) ? null : rd.GetString(rd.GetOrdinal("Email")),
+            Nombres = rd.IsDBNull(rd.GetOrdinal("Nombres")) ? "" : rd.GetString(rd.GetOrdinal("Nombres")),
+            Apellidos = rd.IsDBNull(rd.GetOrdinal("Apellidos")) ? "" : rd.GetString(rd.GetOrdinal("Apellidos")),
+            Activo = rd.GetBoolean(rd.GetOrdinal("Activo")),
+            Roles = new List<Rol>()
+        };
+
+        // 2do resultset: roles (columna "Nombre")
+        if (await rd.NextResultAsync())
+        {
+            while (await rd.ReadAsync())
+            {
+                u.Roles.Add(new Rol
+                {
+                    IdRol = 0,
+                    Nombre = rd.GetString(rd.GetOrdinal("Nombre"))
+                });
+            }
+        }
+
+        return u;
     }
 
-    public async Task<List<UsuarioResponse>> ListarAsync(bool? activo, string? q)
+    public async Task<int> CrearAsync(UsuarioCrearRequest req)
     {
-        using var cn = _factory.CreateConnection();
+        using var cn = _cnFactory.CreateConnection();
+        using var cmd = new SqlCommand("seguridad.usp_Usuario_Upsert", cn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
 
-        var rows = await cn.QueryAsync<UsuarioResponse>(
-            "seguridad.usp_Usuario_Listar",
-            new { Activo = activo, Q = q },
-            commandType: CommandType.StoredProcedure
-        );
+        cmd.Parameters.AddWithValue("@IdUsuario", DBNull.Value);
+        cmd.Parameters.AddWithValue("@Username", req.Username);
+        cmd.Parameters.AddWithValue("@Email", DbOrNull(req.Email));
+        cmd.Parameters.AddWithValue("@Nombres", DbOrNull(req.Nombres));
+        cmd.Parameters.AddWithValue("@Apellidos", DbOrNull(req.Apellidos));
+        cmd.Parameters.AddWithValue("@Activo", req.Activo);
+        cmd.Parameters.AddWithValue("@PasswordPlain", req.Password);
+        cmd.Parameters.AddWithValue("@Usuario", DbOrNull(req.Usuario));
 
-        return rows.ToList();
+        var idObj = await cmd.ExecuteScalarAsync();
+        return Convert.ToInt32(idObj);
     }
 
-    public async Task<UsuarioResponse> ActualizarAsync(int usuarioId, UsuarioActualizarRequest req)
+    public async Task<int> ActualizarAsync(int usuarioId, UsuarioActualizarRequest req)
     {
-        using var cn = _factory.CreateConnection();
+        var actual = await ObtenerPorIdAsync(usuarioId);
+        if (actual == null) throw new Exception("Usuario no existe.");
 
-        return await cn.QuerySingleAsync<UsuarioResponse>(
-            "seguridad.usp_Usuario_Actualizar",
-            new { UsuarioId = usuarioId, req.Nombres, req.Apellidos, req.Email },
-            commandType: CommandType.StoredProcedure
-        );
+        using var cn = _cnFactory.CreateConnection();
+        using var cmd = new SqlCommand("seguridad.usp_Usuario_Upsert", cn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        cmd.Parameters.AddWithValue("@IdUsuario", usuarioId);
+        cmd.Parameters.AddWithValue("@Username", actual.Username);
+        cmd.Parameters.AddWithValue("@Email", DbOrNull(req.Email));
+        cmd.Parameters.AddWithValue("@Nombres", DbOrNull(req.Nombres));
+        cmd.Parameters.AddWithValue("@Apellidos", DbOrNull(req.Apellidos));
+        cmd.Parameters.AddWithValue("@Activo", actual.Activo);
+        cmd.Parameters.AddWithValue("@PasswordPlain", DBNull.Value);
+        cmd.Parameters.AddWithValue("@Usuario", "admin");
+
+        var idObj = await cmd.ExecuteScalarAsync();
+        return Convert.ToInt32(idObj);
     }
 
-    public async Task CambiarPasswordAsync(int usuarioId, byte[] hash, byte[] salt)
+    public async Task CambiarPasswordAsync(int usuarioId, string newPassword, string usuario)
     {
-        using var cn = _factory.CreateConnection();
+        var actual = await ObtenerPorIdAsync(usuarioId);
+        if (actual == null) throw new Exception("Usuario no existe.");
 
-        await cn.ExecuteAsync(
-            "seguridad.usp_Usuario_CambiarPassword",
-            new { UsuarioId = usuarioId, PasswordHash = hash, PasswordSalt = salt },
-            commandType: CommandType.StoredProcedure
-        );
+        using var cn = _cnFactory.CreateConnection();
+        using var cmd = new SqlCommand("seguridad.usp_Usuario_Upsert", cn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        cmd.Parameters.AddWithValue("@IdUsuario", usuarioId);
+        cmd.Parameters.AddWithValue("@Username", actual.Username);
+        cmd.Parameters.AddWithValue("@Email", DbOrNull(actual.Email));
+        cmd.Parameters.AddWithValue("@Nombres", DbOrNull(actual.Nombres));
+        cmd.Parameters.AddWithValue("@Apellidos", DbOrNull(actual.Apellidos));
+        cmd.Parameters.AddWithValue("@Activo", actual.Activo);
+        cmd.Parameters.AddWithValue("@PasswordPlain", newPassword);
+        cmd.Parameters.AddWithValue("@Usuario", DbOrNull(usuario));
+
+        await cmd.ExecuteScalarAsync();
     }
 
-    public async Task<UsuarioResponse> CambiarEstadoAsync(int usuarioId, bool activo)
+    public async Task CambiarEstadoAsync(int usuarioId, bool activo, string usuario)
     {
-        using var cn = _factory.CreateConnection();
+        var actual = await ObtenerPorIdAsync(usuarioId);
+        if (actual == null) throw new Exception("Usuario no existe.");
 
-        return await cn.QuerySingleAsync<UsuarioResponse>(
-            "seguridad.usp_Usuario_CambiarEstado",
-            new { UsuarioId = usuarioId, Activo = activo },
-            commandType: CommandType.StoredProcedure
-        );
+        using var cn = _cnFactory.CreateConnection();
+        using var cmd = new SqlCommand("seguridad.usp_Usuario_Upsert", cn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        cmd.Parameters.AddWithValue("@IdUsuario", usuarioId);
+        cmd.Parameters.AddWithValue("@Username", actual.Username);
+        cmd.Parameters.AddWithValue("@Email", DbOrNull(actual.Email));
+        cmd.Parameters.AddWithValue("@Nombres", DbOrNull(actual.Nombres));
+        cmd.Parameters.AddWithValue("@Apellidos", DbOrNull(actual.Apellidos));
+        cmd.Parameters.AddWithValue("@Activo", activo);
+        cmd.Parameters.AddWithValue("@PasswordPlain", DBNull.Value);
+        cmd.Parameters.AddWithValue("@Usuario", DbOrNull(usuario));
+
+        await cmd.ExecuteScalarAsync();
     }
 
-    public async Task AsignarRolAsync(int usuarioId, string rolNombre)
+    // Firma POR DTO para calzar con tu Service/Controller
+    public async Task AsignarRolAsync(int usuarioId, UsuarioAsignarRolRequest req)
     {
-        using var cn = _factory.CreateConnection();
+        using var cn = _cnFactory.CreateConnection();
+        using var cmd = new SqlCommand("seguridad.usp_UsuarioRol_Set", cn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
 
-        await cn.ExecuteAsync(
-            "seguridad.usp_Usuario_AsignarRol",
-            new { UsuarioId = usuarioId, RolNombre = rolNombre },
-            commandType: CommandType.StoredProcedure
-        );
-    }
+        cmd.Parameters.AddWithValue("@IdUsuario", usuarioId);
+        cmd.Parameters.AddWithValue("@CsvRoles", DbOrNull(req.CsvRoles));
+        cmd.Parameters.AddWithValue("@Usuario", DbOrNull(req.Usuario));
 
-    public async Task<List<Rol>> ListarRolesAsync(int usuarioId)
-    {
-        using var cn = _factory.CreateConnection();
-
-        var rows = await cn.QueryAsync<Rol>(
-            "seguridad.usp_Usuario_ListarRoles",
-            new { UsuarioId = usuarioId },
-            commandType: CommandType.StoredProcedure
-        );
-
-        return rows.ToList();
+        await cmd.ExecuteNonQueryAsync();
     }
 }
