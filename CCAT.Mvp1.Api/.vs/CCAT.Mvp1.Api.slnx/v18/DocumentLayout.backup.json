@@ -1,12 +1,37 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAADsAAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-20T20:44:42.067Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

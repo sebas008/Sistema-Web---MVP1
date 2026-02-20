@@ -51,6 +51,14 @@ builder.Services.AddScoped<IComprasService, ComprasService>();
 builder.Services.AddScoped<IGuiasRepository, GuiasRepository>();
 builder.Services.AddScoped<IGuiasService, GuiasService>();
 
+//Clientes
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
+
+//OrdenServicios
+builder.Services.AddScoped<IOrdenServicioRepository, OrdenServicioRepository>();
+builder.Services.AddScoped<IOrdenServicioService, OrdenServicioService>();
+
 // =====================
 // App
 // =====================
