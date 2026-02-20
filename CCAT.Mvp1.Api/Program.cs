@@ -39,6 +39,18 @@ builder.Services.AddScoped<IInventarioRepuestoService, InventarioRepuestoService
 builder.Services.AddScoped<IVehiculoNuevoRepository, VehiculoNuevoRepository>();
 builder.Services.AddScoped<IVehiculoNuevoService, VehiculoNuevoService>();
 
+//Contabilidad - Facturación
+builder.Services.AddScoped<IFacturacionRepository, FacturacionRepository>();
+builder.Services.AddScoped<IFacturacionService, FacturacionService>();
+
+//Contabilidad - Compras
+builder.Services.AddScoped<IComprasRepository, ComprasRepository>();
+builder.Services.AddScoped<IComprasService, ComprasService>();
+
+//Contabilidad - Guias
+builder.Services.AddScoped<IGuiasRepository, GuiasRepository>();
+builder.Services.AddScoped<IGuiasService, GuiasService>();
+
 // =====================
 // App
 // =====================
