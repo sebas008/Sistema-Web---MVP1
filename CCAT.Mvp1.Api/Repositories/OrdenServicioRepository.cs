@@ -1,26 +1,58 @@
-﻿using System.Data;
+using System.Data;
 using Microsoft.Data.SqlClient;
 using CCAT.Mvp1.Api.DTOs.Servicios.OrdenServicio;
 using CCAT.Mvp1.Api.Interfaces;
 
 namespace CCAT.Mvp1.Api.Repositories;
 
+// Implementación alineada a SISTEMA_CCAT.sql (sin SPs de cabecera OS)
 public class OrdenServicioRepository : IOrdenServicioRepository
 {
     private readonly IDbConnectionFactory _factory;
     public OrdenServicioRepository(IDbConnectionFactory factory) => _factory = factory;
 
+    private static object DbOrNull(string? v) => string.IsNullOrWhiteSpace(v) ? DBNull.Value : v;
+
     public async Task<List<OrdenServicioResponse>> ListarAsync(string? q, string? estado)
     {
-        using var cn = _factory.CreateConnection();
-        using var cmd = new SqlCommand("servicios.usp_OrdenServicio_List", (SqlConnection)cn)
-        { CommandType = CommandType.StoredProcedure };
+        await using var cn = _factory.CreateConnection();
+        await cn.OpenAsync();
 
-        cmd.Parameters.AddWithValue("@Q", (object?)q ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@Estado", (object?)estado ?? DBNull.Value);
+        var sql = @"
+SELECT TOP (300)
+    os.IdOrdenServicio,
+    os.NumeroOS,
+    os.IdCliente,
+    os.Placa,
+    os.Marca,
+    os.Modelo,
+    os.Kilometraje,
+    os.FechaIngreso,
+    os.FechaSalida,
+    os.Estado,
+    os.Observacion,
+    os.Subtotal,
+    os.IGV,
+    os.Total,
+    os.FechaCreacion,
+    os.UsuarioCreacion
+FROM servicios.OrdenServicio os
+WHERE (@estado IS NULL OR os.Estado = @estado)
+  AND (
+        @q IS NULL
+        OR os.NumeroOS LIKE '%' + @q + '%'
+        OR os.Placa LIKE '%' + @q + '%'
+        OR os.Marca LIKE '%' + @q + '%'
+        OR os.Modelo LIKE '%' + @q + '%'
+      )
+ORDER BY os.IdOrdenServicio DESC;";
+
+        await using var cmd = new SqlCommand(sql, (SqlConnection)cn);
+        cmd.Parameters.AddWithValue("@q", DbOrNull(q));
+        cmd.Parameters.AddWithValue("@estado", DbOrNull(estado));
 
         var list = new List<OrdenServicioResponse>();
-        using var rd = await cmd.ExecuteReaderAsync();
+        await using var rd = await cmd.ExecuteReaderAsync();
         while (await rd.ReadAsync())
         {
             list.Add(MapCabecera(rd));
@@ -30,13 +62,48 @@ public class OrdenServicioRepository : IOrdenServicioRepository
 
     public async Task<OrdenServicioResponse?> ObtenerAsync(int idOrdenServicio)
     {
-        using var cn = _factory.CreateConnection();
-        using var cmd = new SqlCommand("servicios.usp_OrdenServicio_Get", (SqlConnection)cn)
-        { CommandType = CommandType.StoredProcedure };
+        await using var cn = _factory.CreateConnection();
+        await cn.OpenAsync();
 
-        cmd.Parameters.AddWithValue("@IdOrdenServicio", idOrdenServicio);
+        var sql = @"
+SELECT
+    os.IdOrdenServicio,
+    os.NumeroOS,
+    os.IdCliente,
+    os.Placa,
+    os.Marca,
+    os.Modelo,
+    os.Kilometraje,
+    os.FechaIngreso,
+    os.FechaSalida,
+    os.Estado,
+    os.Observacion,
+    os.Subtotal,
+    os.IGV,
+    os.Total,
+    os.FechaCreacion,
+    os.UsuarioCreacion
+FROM servicios.OrdenServicio os
+WHERE os.IdOrdenServicio = @id;
 
-        using var rd = await cmd.ExecuteReaderAsync();
+SELECT
+    d.IdOrdenServicioDetalle,
+    d.IdOrdenServicio,
+    d.Item,
+    d.Tipo,
+    d.IdProducto,
+    d.Descripcion,
+    d.Cantidad,
+    d.PrecioUnitario,
+    d.Importe
+FROM servicios.OrdenServicioDetalle d
+WHERE d.IdOrdenServicio = @id
+ORDER BY d.Item;";
+
+        await using var cmd = new SqlCommand(sql, (SqlConnection)cn);
+        cmd.Parameters.AddWithValue("@id", idOrdenServicio);
+
+        await using var rd = await cmd.ExecuteReaderAsync();
         if (!await rd.ReadAsync()) return null;
 
         var os = MapCabecera(rd);
@@ -54,44 +121,80 @@ public class OrdenServicioRepository : IOrdenServicioRepository
 
     public async Task<(int idOrdenServicio, string? numeroOS)> CrearAsync(OrdenServicioCrearRequest req)
     {
-        using var cn = _factory.CreateConnection();
-        using var cmd = new SqlCommand("servicios.usp_OrdenServicio_Crear", (SqlConnection)cn)
-        { CommandType = CommandType.StoredProcedure };
+        await using var cn = _factory.CreateConnection();
+        await cn.OpenAsync();
 
-        cmd.Parameters.AddWithValue("@IdCliente", (object?)req.IdCliente ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@Placa", (object?)req.Placa ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@Marca", (object?)req.Marca ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@Modelo", (object?)req.Modelo ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@Kilometraje", (object?)req.Kilometraje ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@Observacion", (object?)req.Observacion ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@Usuario", req.Usuario);
+        await using var tx = await ((SqlConnection)cn).BeginTransactionAsync();
+        try
+        {
+            // NumeroOS: OS-YYYYMMDD-####
+            var today = DateTime.Now;
+            var prefix = $"OS-{today:yyyyMMdd}-";
 
-        using var rd = await cmd.ExecuteReaderAsync();
-        await rd.ReadAsync();
+            var seqSql = @"
+SELECT ISNULL(MAX(CAST(RIGHT(NumeroOS, 4) AS INT)), 0) + 1
+FROM servicios.OrdenServicio
+WHERE NumeroOS LIKE @pref + '%';";
 
-        // SP retorna: IdOrdenServicio, NumeroOS
-        var id = rd.GetInt32(rd.GetOrdinal("IdOrdenServicio"));
-        var numero = rd.IsDBNull(rd.GetOrdinal("NumeroOS")) ? null : rd.GetString(rd.GetOrdinal("NumeroOS"));
+            int next;
+            await using (var cmdSeq = new SqlCommand(seqSql, (SqlConnection)cn, (SqlTransaction)tx))
+            {
+                cmdSeq.Parameters.AddWithValue("@pref", prefix);
+                next = Convert.ToInt32(await cmdSeq.ExecuteScalarAsync());
+            }
 
-        return (id, numero);
+            var numeroOS = prefix + next.ToString("0000");
+
+            var insSql = @"
+INSERT INTO servicios.OrdenServicio
+(NumeroOS, IdCliente, Placa, Marca, Modelo, Kilometraje, FechaIngreso, Estado, Observacion, Subtotal, IGV, Total, FechaCreacion, UsuarioCreacion)
+VALUES
+(@numero, @idCliente, @placa, @marca, @modelo, @km, SYSDATETIME(), 'ABIERTA', @obs, 0, 0, 0, SYSDATETIME(), @usuario);
+SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            int newId;
+            await using (var cmd = new SqlCommand(insSql, (SqlConnection)cn, (SqlTransaction)tx))
+            {
+                cmd.Parameters.AddWithValue("@numero", numeroOS);
+                cmd.Parameters.AddWithValue("@idCliente", (object?)req.IdCliente ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@placa", DbOrNull(req.Placa));
+                cmd.Parameters.AddWithValue("@marca", DbOrNull(req.Marca));
+                cmd.Parameters.AddWithValue("@modelo", DbOrNull(req.Modelo));
+                cmd.Parameters.AddWithValue("@km", (object?)req.Kilometraje ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@obs", DbOrNull(req.Observacion));
+                cmd.Parameters.AddWithValue("@usuario", DbOrNull(req.Usuario) ?? "admin");
+                newId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            }
+
+            await tx.CommitAsync();
+            return (newId, numeroOS);
+        }
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task CambiarEstadoAsync(int idOrdenServicio, string estado)
     {
-        using var cn = _factory.CreateConnection();
-        using var cmd = new SqlCommand("servicios.usp_OrdenServicio_CambiarEstado", (SqlConnection)cn)
-        { CommandType = CommandType.StoredProcedure };
+        await using var cn = _factory.CreateConnection();
+        await cn.OpenAsync();
 
-        cmd.Parameters.AddWithValue("@IdOrdenServicio", idOrdenServicio);
-        cmd.Parameters.AddWithValue("@Estado", estado);
-
+        var sql = "UPDATE servicios.OrdenServicio SET Estado=@e WHERE IdOrdenServicio=@id;";
+        await using var cmd = new SqlCommand(sql, (SqlConnection)cn);
+        cmd.Parameters.AddWithValue("@id", idOrdenServicio);
+        cmd.Parameters.AddWithValue("@e", estado);
         await cmd.ExecuteNonQueryAsync();
     }
 
+    // Detalle usa SPs del script (existen)
     public async Task<(int idDetalle, int item)> AgregarDetalleAsync(int idOrdenServicio, OrdenServicioDetalleAddRequest req)
     {
-        using var cn = _factory.CreateConnection();
-        using var cmd = new SqlCommand("servicios.usp_OrdenServicioDetalle_Add", (SqlConnection)cn)
+        await using var cn = _factory.CreateConnection();
+        await cn.OpenAsync();
+
+        await using var cmd = new SqlCommand("servicios.usp_OrdenServicioDetalle_Add", (SqlConnection)cn)
         { CommandType = CommandType.StoredProcedure };
 
         cmd.Parameters.AddWithValue("@IdOrdenServicio", idOrdenServicio);
@@ -100,27 +203,24 @@ public class OrdenServicioRepository : IOrdenServicioRepository
         cmd.Parameters.AddWithValue("@Descripcion", req.Descripcion);
         cmd.Parameters.AddWithValue("@Cantidad", req.Cantidad);
         cmd.Parameters.AddWithValue("@PrecioUnitario", req.PrecioUnitario);
-        cmd.Parameters.AddWithValue("@Usuario", req.Usuario);
+        cmd.Parameters.AddWithValue("@Usuario", DbOrNull(req.Usuario) ?? "admin");
 
-        using var rd = await cmd.ExecuteReaderAsync();
+        await using var rd = await cmd.ExecuteReaderAsync();
         await rd.ReadAsync();
-
-        // SP retorna: IdOrdenServicioDetalle, Item
         var idDet = rd.GetInt32(rd.GetOrdinal("IdOrdenServicioDetalle"));
         var item = rd.GetInt32(rd.GetOrdinal("Item"));
-
         return (idDet, item);
     }
 
     public async Task RemoverDetalleAsync(int idOrdenServicioDetalle, string usuario)
     {
-        using var cn = _factory.CreateConnection();
-        using var cmd = new SqlCommand("servicios.usp_OrdenServicioDetalle_Remove", (SqlConnection)cn)
+        await using var cn = _factory.CreateConnection();
+        await cn.OpenAsync();
+
+        await using var cmd = new SqlCommand("servicios.usp_OrdenServicioDetalle_Remove", (SqlConnection)cn)
         { CommandType = CommandType.StoredProcedure };
-
         cmd.Parameters.AddWithValue("@IdOrdenServicioDetalle", idOrdenServicioDetalle);
-        cmd.Parameters.AddWithValue("@Usuario", usuario);
-
+        cmd.Parameters.AddWithValue("@Usuario", DbOrNull(usuario) ?? "admin");
         await cmd.ExecuteNonQueryAsync();
     }
 
@@ -129,7 +229,7 @@ public class OrdenServicioRepository : IOrdenServicioRepository
         return new OrdenServicioResponse
         {
             IdOrdenServicio = rd.GetInt32(rd.GetOrdinal("IdOrdenServicio")),
-            NumeroOS = rd.IsDBNull(rd.GetOrdinal("NumeroOS")) ? null : rd.GetString(rd.GetOrdinal("NumeroOS")),
+            NumeroOS = rd.GetString(rd.GetOrdinal("NumeroOS")),
             IdCliente = rd.IsDBNull(rd.GetOrdinal("IdCliente")) ? null : rd.GetInt32(rd.GetOrdinal("IdCliente")),
             Placa = rd.IsDBNull(rd.GetOrdinal("Placa")) ? null : rd.GetString(rd.GetOrdinal("Placa")),
             Marca = rd.IsDBNull(rd.GetOrdinal("Marca")) ? null : rd.GetString(rd.GetOrdinal("Marca")),

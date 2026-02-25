@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CCAT.Mvp1.Api.DTOs.Auth;
-using CCAT.Mvp1.Api.Interfaces;
+﻿using CCAT.Mvp1.Api.Models;
+using CCAT.Mvp1.Api.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CCAT.Mvp1.Api.Controllers;
 
@@ -8,14 +8,24 @@ namespace CCAT.Mvp1.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _service;
+    private readonly IAuthService _authService;
 
-    public AuthController(IAuthService service)
+    public AuthController(IAuthService authService)
     {
-        _service = service;
+        _authService = authService;
     }
 
     [HttpPost("login")]
-    public Task<LoginResponse> Login([FromBody] LoginDto dto)
-        => _service.LoginAsync(dto);
+    public IActionResult Login([FromBody] LoginRequest request)
+    {
+        try
+        {
+            var result = _authService.Login(request);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
+    }
 }

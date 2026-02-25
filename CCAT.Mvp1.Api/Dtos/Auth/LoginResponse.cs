@@ -1,12 +1,10 @@
-﻿namespace CCAT.Mvp1.Api.DTOs.Auth;
+﻿namespace CCAT.Mvp1.Api.Models;
 
 public class LoginResponse
 {
     public int UsuarioId { get; set; }
-    public string Username { get; set; } = "";
-    public string Nombres { get; set; } = "";
-    public string Apellidos { get; set; } = "";
-    public string? Email { get; set; }
-    public bool Activo { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Nombres { get; set; } = string.Empty;
+    public string Apellidos { get; set; } = string.Empty;
     public List<string> Roles { get; set; } = new();
 }

@@ -1,9 +1,17 @@
-﻿namespace CCAT.Mvp1.Api.Middleware;
+using System.Text.Json;
+
+namespace CCAT.Mvp1.Api.Middlewares;
 
 public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate _next;
-    public ErrorHandlingMiddleware(RequestDelegate next) => _next = next;
+    private readonly IWebHostEnvironment _env;
+
+    public ErrorHandlingMiddleware(RequestDelegate next, IWebHostEnvironment env)
+    {
+        _next = next;
+        _env = env;
+    }
 
     public async Task Invoke(HttpContext context)
     {
@@ -11,17 +19,25 @@ public class ErrorHandlingMiddleware
         {
             await _next(context);
         }
-        catch (ArgumentException ex)
+        catch (ApiException ex)
         {
-            context.Response.StatusCode = 400;
+            context.Response.StatusCode = ex.StatusCode;
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new { error = ex.Message }));
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = ex.Message }));
         }
         catch (Exception ex)
         {
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new { error = "Error interno", detail = ex.Message }));
+
+            // Importante: en C# los tipos anónimos deben coincidir en el operador condicional.
+            // Usamos 'object' para evitar error de compilación.
+            object payload = _env.IsDevelopment()
+                ? new { error = "Error interno del servidor", detail = ex.Message, stack = ex.StackTrace }
+                : new { error = "Error interno del servidor" };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(payload));
         }
     }
 }

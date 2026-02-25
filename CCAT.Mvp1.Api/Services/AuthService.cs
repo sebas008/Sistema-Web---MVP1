@@ -1,25 +1,21 @@
-﻿using CCAT.Mvp1.Api.DTOs.Auth;
-using CCAT.Mvp1.Api.Interfaces;
+﻿using CCAT.Mvp1.Api.Models;
+using CCAT.Mvp1.Api.Repositories;
 
 namespace CCAT.Mvp1.Api.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IAuthRepository _repo;
+    private readonly IAuthRepository _authRepository;
 
-    public AuthService(IAuthRepository repo)
+    public AuthService(IAuthRepository authRepository)
     {
-        _repo = repo;
+        _authRepository = authRepository;
     }
 
-    public Task<LoginResponse> LoginAsync(LoginDto dto)
+    public LoginResponse Login(LoginRequest request)
     {
-        if (string.IsNullOrWhiteSpace(dto.Username))
-            throw new ArgumentException("Username obligatorio.");
-
-        if (string.IsNullOrWhiteSpace(dto.Password))
-            throw new ArgumentException("Password obligatorio.");
-
-        return _repo.LoginAsync(dto);
+        // Aquí va la lógica de negocio (validaciones, normalización, etc.)
+        // Por ahora MVP: delega al repo (que valida credenciales)
+        return _authRepository.Login(request);
     }
 }

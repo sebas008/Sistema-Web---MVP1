@@ -1,8 +1,8 @@
-﻿using CCAT.Mvp1.Api.DTOs.Auth;
+﻿using CCAT.Mvp1.Api.Models;
 
-namespace CCAT.Mvp1.Api.Interfaces;
+namespace CCAT.Mvp1.Api.Repositories;
 
 public interface IAuthRepository
 {
-    Task<LoginResponse> LoginAsync(LoginDto dto);
+    LoginResponse Login(LoginRequest request);
 }

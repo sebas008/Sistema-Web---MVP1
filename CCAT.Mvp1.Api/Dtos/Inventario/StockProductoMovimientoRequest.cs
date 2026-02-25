@@ -7,4 +7,5 @@ public class StockProductoMovimientoRequest
     public string TipoMovimiento { get; set; } = "";   // ENTRADA | SALIDA | AJUSTE
     public string? Referencia { get; set; }            // "COMPRA", "VENTA", "INIT", etc.
     public string Usuario { get; set; } = "admin";
+    public string? Tipo { get; set; }
 }

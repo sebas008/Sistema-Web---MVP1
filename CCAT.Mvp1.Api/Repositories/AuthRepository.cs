@@ -1,55 +1,94 @@
-﻿using System.Data;
+﻿using CCAT.Mvp1.Api.Interfaces;
+using CCAT.Mvp1.Api.Models;
+using Dapper;
 using Microsoft.Data.SqlClient;
-using CCAT.Mvp1.Api.DTOs.Auth;
-using CCAT.Mvp1.Api.Interfaces;
+using System.Data;
 
 namespace CCAT.Mvp1.Api.Repositories;
 
 public class AuthRepository : IAuthRepository
 {
-    private readonly IDbConnectionFactory _cnFactory;
+    private readonly IDbConnectionFactory _factory;
 
-    public AuthRepository(IDbConnectionFactory cnFactory)
+    public AuthRepository(IDbConnectionFactory factory)
     {
-        _cnFactory = cnFactory;
+        _factory = factory;
     }
 
-    public async Task<LoginResponse> LoginAsync(LoginDto dto)
+    public LoginResponse Login(LoginRequest request)
     {
-        using var cn = _cnFactory.CreateConnection();
-        using var cmd = new SqlCommand("seguridad.usp_Usuario_Login", cn)
+        if (request is null) throw new ArgumentNullException(nameof(request));
+        if (string.IsNullOrWhiteSpace(request.Username))
+            throw new UnauthorizedAccessException("Username obligatorio.");
+        if (string.IsNullOrWhiteSpace(request.Password))
+            throw new UnauthorizedAccessException("Password obligatorio.");
+
+        using var cn = _factory.CreateConnection();
+
+        try
         {
-            CommandType = CommandType.StoredProcedure
-        };
+            using var multi = cn.QueryMultiple(
+                "seguridad.usp_Usuario_Login",
+                new
+                {
+                    Username = request.Username.Trim(),
+                    PasswordPlain = request.Password
+                },
+                commandType: CommandType.StoredProcedure
+            );
 
-        cmd.Parameters.AddWithValue("@Username", dto.Username);
-        cmd.Parameters.AddWithValue("@PasswordPlain", dto.Password);
+            // 1er resultset: usuario
+            var user = multi.ReadFirstOrDefault<UsuarioLoginRow>();
+            if (user is null)
+                throw new UnauthorizedAccessException("Credenciales inválidas.");
 
-        using var rd = await cmd.ExecuteReaderAsync();
+            // 2do resultset: roles
+            var roles = multi.Read<RolRow>()
+                .Select(r => r.Nombre)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
-        // SP puede lanzar error "Credenciales inválidas."
-        // Si no leyera nada, igual controlamos.
-        if (!await rd.ReadAsync())
-            throw new Exception("Credenciales inválidas.");
-
-        var resp = new LoginResponse
-        {
-            UsuarioId = rd.GetInt32(rd.GetOrdinal("IdUsuario")),
-            Username = rd.GetString(rd.GetOrdinal("Username")),
-            Nombres = rd.IsDBNull(rd.GetOrdinal("Nombres")) ? "" : rd.GetString(rd.GetOrdinal("Nombres")),
-            Apellidos = rd.IsDBNull(rd.GetOrdinal("Apellidos")) ? "" : rd.GetString(rd.GetOrdinal("Apellidos")),
-            Roles = new List<string>()
-        };
-
-        // 2do resultset: roles (columna "Nombre")
-        if (await rd.NextResultAsync())
-        {
-            while (await rd.ReadAsync())
+            return new LoginResponse
             {
-                resp.Roles.Add(rd.GetString(rd.GetOrdinal("Nombre")));
-            }
+                UsuarioId = user.IdUsuario,
+                Username = user.Username,
+                Nombres = user.Nombres ?? "",
+                Apellidos = user.Apellidos ?? "",
+                Roles = roles
+            };
         }
+        catch (SqlException ex)
+        {
+            // Tu SP THROW usa números 52301, 52302, 52303
+            // 52301: credenciales inválidas
+            // 52302: usuario inactivo
+            // 52303: usuario bloqueado
+            // En SqlException, el "Number" puede ser el que lanzas con THROW.
+            if (ex.Number is 52301 or 52302 or 52303)
+            {
+                // devolvemos 401 desde el controller/middleware capturando UnauthorizedAccessException
+                throw new UnauthorizedAccessException(ex.Message);
+            }
 
-        return resp;
+            // Cualquier otro SQL error: 500 (no lo camuflamos como 401)
+            throw;
+        }
+    }
+
+    private sealed class UsuarioLoginRow
+    {
+        public int IdUsuario { get; set; }
+        public string Username { get; set; } = "";
+        public string? Email { get; set; }
+        public string? Nombres { get; set; }
+        public string? Apellidos { get; set; }
+        public bool Activo { get; set; }
+    }
+
+    private sealed class RolRow
+    {
+        public int IdRol { get; set; }
+        public string Nombre { get; set; } = "";
     }
 }

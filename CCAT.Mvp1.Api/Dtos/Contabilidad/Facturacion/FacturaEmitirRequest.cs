@@ -1,15 +1,16 @@
-﻿namespace CCAT.Mvp1.Api.DTOs.Contabilidad.Facturacion;
+using CCAT.Mvp1.Api.DTOs.Contabilidad;
+
+namespace CCAT.Mvp1.Api.DTOs.Contabilidad.Facturacion;
 
 public class FacturaEmitirRequest
 {
+    public string Serie { get; set; } = "F001";
     public int IdCliente { get; set; }
+    public DateTime FechaEmision { get; set; } = DateTime.Today;
+    public string Moneda { get; set; } = "PEN";
+    public bool AfectaStock { get; set; } = true;
 
-    // opcional si tu SP lo usa
-    public DateTime? Fecha { get; set; }
+    public List<DetalleItemDto> Detalle { get; set; } = new();
 
-    // quién genera la factura (para trazabilidad)
     public string Usuario { get; set; } = "admin";
-
-    // MVP: si tu SP recibe un JSON o CSV de detalle, lo pones aquí
-     public string? DetalleJson { get; set; }
 }

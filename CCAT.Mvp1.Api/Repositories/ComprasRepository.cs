@@ -1,5 +1,6 @@
-﻿using System.Data;
+using System.Data;
 using Microsoft.Data.SqlClient;
+using CCAT.Mvp1.Api.DTOs.Contabilidad;
 using CCAT.Mvp1.Api.DTOs.Contabilidad.Compras;
 using CCAT.Mvp1.Api.Interfaces;
 
@@ -12,18 +13,27 @@ public class ComprasRepository : IComprasRepository
 
     public async Task<int> RegistrarAsync(CompraRegistrarRequest req)
     {
+        if (string.IsNullOrWhiteSpace(req.Serie)) throw new ArgumentException("Serie obligatoria.");
+        if (req.IdProveedor <= 0) throw new ArgumentException("IdProveedor inválido.");
+        if (req.Detalle == null || req.Detalle.Count == 0) throw new ArgumentException("Detalle vacío.");
+
         using var cn = _factory.CreateConnection();
         using var cmd = new SqlCommand("contabilidad.usp_Compra_Registrar", (SqlConnection)cn)
         {
             CommandType = CommandType.StoredProcedure
         };
 
-        // ✅ Ajusta a tus parámetros reales si difieren
+        cmd.Parameters.AddWithValue("@Serie", req.Serie);
         cmd.Parameters.AddWithValue("@IdProveedor", req.IdProveedor);
-        cmd.Parameters.AddWithValue("@Usuario", req.Usuario);
-        cmd.Parameters.AddWithValue("@Fecha", (object?)req.Fecha ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@FechaEmision", req.FechaEmision.Date);
+        cmd.Parameters.AddWithValue("@Moneda", req.Moneda ?? "PEN");
+        cmd.Parameters.AddWithValue("@AfectaStock", req.AfectaStock);
+        cmd.Parameters.AddWithValue("@Usuario", req.Usuario ?? "admin");
 
-        // cmd.Parameters.AddWithValue("@DetalleJson", (object?)req.DetalleJson ?? DBNull.Value);
+        var tvp = BuildDetalleTvp(req.Detalle);
+        var pDetalle = cmd.Parameters.AddWithValue("@Detalle", tvp);
+        pDetalle.SqlDbType = SqlDbType.Structured;
+        pDetalle.TypeName = "contabilidad.TVP_DetalleItem";
 
         var idObj = await cmd.ExecuteScalarAsync();
         return Convert.ToInt32(idObj);
@@ -32,11 +42,21 @@ public class ComprasRepository : IComprasRepository
     public async Task<CompraResponse?> ObtenerPorIdAsync(int idCompra)
     {
         using var cn = _factory.CreateConnection();
-        using var cmd = new SqlCommand("contabilidad.usp_Compra_Get", (SqlConnection)cn)
-        {
-            CommandType = CommandType.StoredProcedure
-        };
 
+        // No existe SP Get/List en tu script; leemos directo de tablas.
+        var sql = @"
+SELECT 
+    c.IdCompra,
+    CONCAT(c.Serie,'-',RIGHT('00000000'+CAST(c.Numero AS VARCHAR(20)),8)) AS Numero,
+    CAST(c.FechaEmision AS DATETIME) AS Fecha,
+    c.Total,
+    c.Estado,
+    p.RazonSocial AS Proveedor
+FROM contabilidad.Compra c
+INNER JOIN contabilidad.Proveedor p ON p.IdProveedor = c.IdProveedor
+WHERE c.IdCompra = @IdCompra;";
+
+        using var cmd = new SqlCommand(sql, (SqlConnection)cn);
         cmd.Parameters.AddWithValue("@IdCompra", idCompra);
 
         using var rd = await cmd.ExecuteReaderAsync();
@@ -45,7 +65,7 @@ public class ComprasRepository : IComprasRepository
         return new CompraResponse
         {
             IdCompra = SafeGetInt(rd, "IdCompra"),
-            Numero = SafeGetString(rd, "Numero") ?? SafeGetString(rd, "Referencia") ?? "",
+            Numero = SafeGetString(rd, "Numero") ?? "",
             Fecha = SafeGetDateTime(rd, "Fecha") ?? DateTime.UtcNow,
             Total = SafeGetDecimal(rd, "Total") ?? 0m,
             Estado = SafeGetString(rd, "Estado") ?? "REGISTRADA",
@@ -56,12 +76,24 @@ public class ComprasRepository : IComprasRepository
     public async Task<List<CompraResponse>> ListarAsync(string? q)
     {
         using var cn = _factory.CreateConnection();
-        using var cmd = new SqlCommand("contabilidad.usp_Compra_List", (SqlConnection)cn)
-        {
-            CommandType = CommandType.StoredProcedure
-        };
 
-        cmd.Parameters.AddWithValue("@Q", (object?)q ?? DBNull.Value);
+        var sql = @"
+SELECT TOP (200)
+    c.IdCompra,
+    CONCAT(c.Serie,'-',RIGHT('00000000'+CAST(c.Numero AS VARCHAR(20)),8)) AS Numero,
+    CAST(c.FechaEmision AS DATETIME) AS Fecha,
+    c.Total,
+    c.Estado,
+    p.RazonSocial AS Proveedor
+FROM contabilidad.Compra c
+INNER JOIN contabilidad.Proveedor p ON p.IdProveedor = c.IdProveedor
+WHERE (@Q IS NULL 
+       OR CONCAT(c.Serie,'-',RIGHT('00000000'+CAST(c.Numero AS VARCHAR(20)),8)) LIKE '%' + @Q + '%'
+       OR p.RazonSocial LIKE '%' + @Q + '%')
+ORDER BY c.IdCompra DESC;";
+
+        using var cmd = new SqlCommand(sql, (SqlConnection)cn);
+        cmd.Parameters.AddWithValue("@Q", (object?)(string.IsNullOrWhiteSpace(q) ? DBNull.Value : q));
 
         var list = new List<CompraResponse>();
         using var rd = await cmd.ExecuteReaderAsync();
@@ -71,7 +103,7 @@ public class ComprasRepository : IComprasRepository
             list.Add(new CompraResponse
             {
                 IdCompra = SafeGetInt(rd, "IdCompra"),
-                Numero = SafeGetString(rd, "Numero") ?? SafeGetString(rd, "Referencia") ?? "",
+                Numero = SafeGetString(rd, "Numero") ?? "",
                 Fecha = SafeGetDateTime(rd, "Fecha") ?? DateTime.UtcNow,
                 Total = SafeGetDecimal(rd, "Total") ?? 0m,
                 Estado = SafeGetString(rd, "Estado") ?? "",
@@ -80,6 +112,26 @@ public class ComprasRepository : IComprasRepository
         }
 
         return list;
+    }
+
+    private static DataTable BuildDetalleTvp(List<DetalleItemDto> detalle)
+    {
+        var dt = new DataTable();
+        dt.Columns.Add("IdProducto", typeof(int));
+        dt.Columns.Add("Descripcion", typeof(string));
+        dt.Columns.Add("Cantidad", typeof(decimal));
+        dt.Columns.Add("PrecioUnitario", typeof(decimal));
+
+        foreach (var it in detalle)
+        {
+            var row = dt.NewRow();
+            row["IdProducto"] = (object?)it.IdProducto ?? DBNull.Value;
+            row["Descripcion"] = (object?)it.Descripcion ?? DBNull.Value;
+            row["Cantidad"] = it.Cantidad;
+            row["PrecioUnitario"] = it.PrecioUnitario;
+            dt.Rows.Add(row);
+        }
+        return dt;
     }
 
     // Helpers

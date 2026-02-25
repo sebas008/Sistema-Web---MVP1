@@ -11,4 +11,5 @@ public class VehiculoNuevoCrearRequest
     public decimal PrecioLista { get; set; }
     public bool Activo { get; set; } = true;
     public string Usuario { get; set; } = "admin";
+
 }

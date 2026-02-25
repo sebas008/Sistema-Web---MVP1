@@ -11,5 +11,8 @@ public class UsuarioResponse
     public string? Apellidos { get; set; }
     public bool Activo { get; set; }
 
+    // Para listado (UI): rol principal/csv
+    public string? RolNombre { get; set; }
+
     public List<Rol> Roles { get; set; } = new();
 }
