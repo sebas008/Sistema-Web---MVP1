@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using CCAT.Mvp1.Api.DTOs.Contabilidad.Facturacion;
 using CCAT.Mvp1.Api.Interfaces;
 
@@ -25,4 +25,11 @@ public class FacturacionController : ControllerBase
     [HttpPost("emitir")]
     public Task<FacturaResponse> Emitir([FromBody] FacturaEmitirRequest req)
         => _service.EmitirAsync(req);
+
+    [HttpPost("{id:int}/anular")]
+    public async Task<IActionResult> Anular(int id)
+    {
+        await _service.AnularAsync(id);
+        return Ok(new { ok = true, mensaje = "Factura anulada correctamente." });
+    }
 }

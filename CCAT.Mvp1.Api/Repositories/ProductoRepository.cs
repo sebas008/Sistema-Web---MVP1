@@ -5,7 +5,6 @@ using CCAT.Mvp1.Api.Interfaces;
 
 namespace CCAT.Mvp1.Api.Repositories;
 
-// Implementación alineada al script SISTEMA_CCAT.sql (sin SPs de Producto)
 public class ProductoRepository : IProductoRepository
 {
     private readonly IDbConnectionFactory _factory;
@@ -161,5 +160,75 @@ WHERE IdProducto = @id;";
 
         var updated = await ObtenerPorIdAsync(productoId);
         return updated ?? throw new Exception("No se pudo obtener el producto actualizado.");
+    }
+
+    public async Task EliminarAsync(int productoId)
+    {
+        await using var cn = _factory.CreateConnection();
+        await cn.OpenAsync();
+        await using var tx = await ((SqlConnection)cn).BeginTransactionAsync();
+
+        try
+        {
+            var existeSql = "SELECT COUNT(1) FROM inventario.Producto WHERE IdProducto = @id;";
+            await using (var existeCmd = new SqlCommand(existeSql, (SqlConnection)cn, (SqlTransaction)tx))
+            {
+                existeCmd.Parameters.AddWithValue("@id", productoId);
+                var existe = Convert.ToInt32(await existeCmd.ExecuteScalarAsync());
+                if (existe == 0)
+                    throw new KeyNotFoundException("El producto no existe.");
+            }
+
+            var referenciasSql = @"
+SELECT TOP 1 Referencia FROM (
+    SELECT 'compra' AS Referencia FROM contabilidad.CompraDetalle WHERE IdProducto = @id
+    UNION ALL
+    SELECT 'factura' AS Referencia FROM contabilidad.FacturaDetalle WHERE IdProducto = @id
+    UNION ALL
+    SELECT 'guía' AS Referencia FROM contabilidad.GuiaDetalle WHERE IdProducto = @id
+    UNION ALL
+    SELECT 'orden de servicio' AS Referencia FROM servicios.OrdenServicioDetalle WHERE IdProducto = @id
+    UNION ALL
+    SELECT 'nota de venta' AS Referencia FROM vehiculos.NotaVentaDetalle WHERE IdProducto = @id
+) t;";
+
+            await using (var refCmd = new SqlCommand(referenciasSql, (SqlConnection)cn, (SqlTransaction)tx))
+            {
+                refCmd.Parameters.AddWithValue("@id", productoId);
+                var referencia = Convert.ToString(await refCmd.ExecuteScalarAsync());
+                if (!string.IsNullOrWhiteSpace(referencia))
+                    throw new InvalidOperationException($"No se puede eliminar el producto porque está relacionado a {referencia}.");
+            }
+
+            var deleteMovSql = "DELETE FROM inventario.StockMovimiento WHERE IdProducto = @id;";
+            await using (var movCmd = new SqlCommand(deleteMovSql, (SqlConnection)cn, (SqlTransaction)tx))
+            {
+                movCmd.Parameters.AddWithValue("@id", productoId);
+                await movCmd.ExecuteNonQueryAsync();
+            }
+
+            var deleteStockSql = "DELETE FROM inventario.Stock WHERE IdProducto = @id;";
+            await using (var stockCmd = new SqlCommand(deleteStockSql, (SqlConnection)cn, (SqlTransaction)tx))
+            {
+                stockCmd.Parameters.AddWithValue("@id", productoId);
+                await stockCmd.ExecuteNonQueryAsync();
+            }
+
+            var deleteProductoSql = "DELETE FROM inventario.Producto WHERE IdProducto = @id;";
+            await using (var prodCmd = new SqlCommand(deleteProductoSql, (SqlConnection)cn, (SqlTransaction)tx))
+            {
+                prodCmd.Parameters.AddWithValue("@id", productoId);
+                var rows = await prodCmd.ExecuteNonQueryAsync();
+                if (rows == 0)
+                    throw new Exception("No se pudo eliminar el producto.");
+            }
+
+            await tx.CommitAsync();
+        }
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 }

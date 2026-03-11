@@ -57,9 +57,9 @@ builder.Services.AddScoped<IComprasService, ComprasService>();
 builder.Services.AddScoped<IFacturacionRepository, FacturacionRepository>();
 builder.Services.AddScoped<IFacturacionService, FacturacionService>();
 
-// ✅ DI: Guías
-builder.Services.AddScoped<IGuiasRepository, GuiasRepository>();
-builder.Services.AddScoped<IGuiasService, GuiasService>();
+//// ✅ DI: Guías
+//builder.Services.AddScoped<IGuiasRepository, GuiasRepository>();
+//builder.Services.AddScoped<IGuiasService, GuiasService>();
 
 // ✅ DI: Ordenes de servicio
 builder.Services.AddScoped<IOrdenServicioRepository, OrdenServicioRepository>();

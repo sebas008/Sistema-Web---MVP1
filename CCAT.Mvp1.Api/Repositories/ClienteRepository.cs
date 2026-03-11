@@ -13,6 +13,7 @@ public class ClienteRepository : IClienteRepository
     public async Task<List<ClienteResponse>> ListarAsync(string? q, bool? soloActivos)
     {
         using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand("contabilidad.usp_Cliente_List", (SqlConnection)cn)
         { CommandType = CommandType.StoredProcedure };
 
@@ -31,6 +32,7 @@ public class ClienteRepository : IClienteRepository
     public async Task<ClienteResponse?> ObtenerAsync(int idCliente)
     {
         using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand("contabilidad.usp_Cliente_Get", (SqlConnection)cn)
         { CommandType = CommandType.StoredProcedure };
 
@@ -45,6 +47,7 @@ public class ClienteRepository : IClienteRepository
     public async Task<int> CrearAsync(ClienteCrearRequest req)
     {
         using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand("contabilidad.usp_Cliente_Upsert", (SqlConnection)cn)
         { CommandType = CommandType.StoredProcedure };
 
@@ -65,6 +68,7 @@ public class ClienteRepository : IClienteRepository
     public async Task<int> ActualizarAsync(int idCliente, ClienteActualizarRequest req)
     {
         using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand("contabilidad.usp_Cliente_Upsert", (SqlConnection)cn)
         { CommandType = CommandType.StoredProcedure };
 
@@ -87,6 +91,7 @@ public class ClienteRepository : IClienteRepository
     public async Task CambiarEstadoAsync(int idCliente, bool activo)
     {
         using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand("contabilidad.usp_Cliente_CambiarEstado", (SqlConnection)cn)
         { CommandType = CommandType.StoredProcedure };
 

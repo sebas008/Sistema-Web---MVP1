@@ -25,6 +25,9 @@ public class InventarioRepuestoRepository : IInventarioRepuestoRepository
     {
         using var cn = _cnFactory.CreateConnection();
 
+        // Defensa: evita ejecutar comandos con conexión cerrada.
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
+
         // ✅ BD FINAL: no existe usp_StockProducto_List, se arma con join Producto + Stock
         var sql = @"
 SELECT

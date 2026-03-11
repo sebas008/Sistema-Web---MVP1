@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using CCAT.Mvp1.Api.DTOs.Inventario;
 using CCAT.Mvp1.Api.Interfaces;
 
@@ -33,4 +33,11 @@ public class ProductosController : ControllerBase
     [HttpPatch("{id:int}/estado")]
     public Task<ProductoResponse> CambiarEstado(int id, [FromQuery] bool activo)
         => _service.CambiarEstadoAsync(id, activo);
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Eliminar(int id)
+    {
+        await _service.EliminarAsync(id);
+        return Ok(new { mensaje = "Producto eliminado correctamente." });
+    }
 }

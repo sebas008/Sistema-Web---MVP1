@@ -18,6 +18,9 @@ public class ComprasRepository : IComprasRepository
         if (req.Detalle == null || req.Detalle.Count == 0) throw new ArgumentException("Detalle vacío.");
 
         using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open)
+            await ((SqlConnection)cn).OpenAsync();
+
         using var cmd = new SqlCommand("contabilidad.usp_Compra_Registrar", (SqlConnection)cn)
         {
             CommandType = CommandType.StoredProcedure
@@ -42,8 +45,9 @@ public class ComprasRepository : IComprasRepository
     public async Task<CompraResponse?> ObtenerPorIdAsync(int idCompra)
     {
         using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open)
+            await ((SqlConnection)cn).OpenAsync();
 
-        // No existe SP Get/List en tu script; leemos directo de tablas.
         var sql = @"
 SELECT 
     c.IdCompra,
@@ -76,6 +80,8 @@ WHERE c.IdCompra = @IdCompra;";
     public async Task<List<CompraResponse>> ListarAsync(string? q)
     {
         using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open)
+            await ((SqlConnection)cn).OpenAsync();
 
         var sql = @"
 SELECT TOP (200)
@@ -114,19 +120,46 @@ ORDER BY c.IdCompra DESC;";
         return list;
     }
 
+    public async Task<bool> AnularAsync(int idCompra)
+    {
+        using var cn = _factory.CreateConnection();
+        if (cn.State != ConnectionState.Open)
+            await ((SqlConnection)cn).OpenAsync();
+
+        const string sql = @"
+UPDATE contabilidad.Compra
+SET Estado = 'ANULADA'
+WHERE IdCompra = @IdCompra
+  AND ISNULL(Estado, '') <> 'ANULADA';";
+
+        using var cmd = new SqlCommand(sql, (SqlConnection)cn);
+        cmd.Parameters.AddWithValue("@IdCompra", idCompra);
+
+        var rows = await cmd.ExecuteNonQueryAsync();
+        return rows > 0;
+    }
+
     private static DataTable BuildDetalleTvp(List<DetalleItemDto> detalle)
     {
+        // Debe coincidir exactamente con contabilidad.TVP_DetalleItem (7 columnas)
         var dt = new DataTable();
+        dt.Columns.Add("Item", typeof(int));
+        dt.Columns.Add("TipoItem", typeof(string));
         dt.Columns.Add("IdProducto", typeof(int));
+        dt.Columns.Add("IdVehiculo", typeof(int));
         dt.Columns.Add("Descripcion", typeof(string));
         dt.Columns.Add("Cantidad", typeof(decimal));
         dt.Columns.Add("PrecioUnitario", typeof(decimal));
 
-        foreach (var it in detalle)
+        for (int i = 0; i < detalle.Count; i++)
         {
+            var it = detalle[i];
             var row = dt.NewRow();
+            row["Item"] = i + 1;
+            row["TipoItem"] = it.IdProducto.HasValue ? "PRODUCTO" : "SERVICIO";
             row["IdProducto"] = (object?)it.IdProducto ?? DBNull.Value;
-            row["Descripcion"] = (object?)it.Descripcion ?? DBNull.Value;
+            row["IdVehiculo"] = DBNull.Value;
+            row["Descripcion"] = string.IsNullOrWhiteSpace(it.Descripcion) ? DBNull.Value : it.Descripcion;
             row["Cantidad"] = it.Cantidad;
             row["PrecioUnitario"] = it.PrecioUnitario;
             dt.Rows.Add(row);
@@ -134,7 +167,6 @@ ORDER BY c.IdCompra DESC;";
         return dt;
     }
 
-    // Helpers
     private static int SafeGetInt(SqlDataReader rd, string col)
         => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? rd.GetInt32(rd.GetOrdinal(col)) : 0;
 

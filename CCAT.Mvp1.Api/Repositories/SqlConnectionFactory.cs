@@ -15,8 +15,9 @@ public class SqlConnectionFactory : IDbConnectionFactory
 
     public SqlConnection CreateConnection()
     {
-        var cn = new SqlConnection(_connectionString);
-        cn.Open();
-        return cn;
+        // No abrir aquí. Cada repositorio maneja OpenAsync/Dispose.
+        // Si abrimos aquí y luego el repositorio llama OpenAsync(), SQLClient lanza:
+        // "La conexión no se cerró. El estado actual de la conexión es abierta."
+        return new SqlConnection(_connectionString);
     }
 }

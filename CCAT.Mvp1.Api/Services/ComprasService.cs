@@ -1,4 +1,4 @@
-﻿using CCAT.Mvp1.Api.DTOs.Contabilidad.Compras;
+using CCAT.Mvp1.Api.DTOs.Contabilidad.Compras;
 using CCAT.Mvp1.Api.Interfaces;
 
 namespace CCAT.Mvp1.Api.Services;
@@ -20,6 +20,6 @@ public class ComprasService : IComprasService
     }
 
     public Task<CompraResponse?> ObtenerPorIdAsync(int idCompra) => _repo.ObtenerPorIdAsync(idCompra);
-
     public Task<List<CompraResponse>> ListarAsync(string? q) => _repo.ListarAsync(q);
+    public Task<bool> AnularAsync(int idCompra) => _repo.AnularAsync(idCompra);
 }

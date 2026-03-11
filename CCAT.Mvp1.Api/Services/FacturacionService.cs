@@ -1,4 +1,4 @@
-﻿using CCAT.Mvp1.Api.DTOs.Contabilidad.Facturacion;
+using CCAT.Mvp1.Api.DTOs.Contabilidad.Facturacion;
 using CCAT.Mvp1.Api.Interfaces;
 
 namespace CCAT.Mvp1.Api.Services;
@@ -11,16 +11,17 @@ public class FacturacionService : IFacturacionService
     public async Task<FacturaResponse> EmitirAsync(FacturaEmitirRequest req)
     {
         var id = await _repo.EmitirAsync(req);
-
-        // Intentamos devolver la factura completa (si tienes usp_Factura_Get)
         var factura = await _repo.ObtenerPorIdAsync(id);
-        if (factura is null)
-        {
-            // fallback mínimo para no romper el flujo
-            return new FacturaResponse { IdFactura = id, Numero = $"FACT-{id:0000}", Estado = "EMITIDA", Fecha = DateTime.UtcNow, Total = 0m };
-        }
 
-        return factura;
+        return factura ?? new FacturaResponse
+        {
+            IdFactura = id,
+            Numero = $"FACT-{id:00000000}",
+            Estado = "EMITIDA",
+            Fecha = req.FechaEmision,
+            Cliente = null,
+            Total = 0m
+        };
     }
 
     public Task<FacturaResponse?> ObtenerPorIdAsync(int idFactura)
@@ -28,4 +29,7 @@ public class FacturacionService : IFacturacionService
 
     public Task<List<FacturaResponse>> ListarAsync(string? q)
         => _repo.ListarAsync(q);
+
+    public Task AnularAsync(int idFactura)
+        => _repo.AnularAsync(idFactura);
 }

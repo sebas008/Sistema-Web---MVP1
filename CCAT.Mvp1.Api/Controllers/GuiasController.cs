@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using CCAT.Mvp1.Api.DTOs.Contabilidad.Guias;
 using CCAT.Mvp1.Api.Interfaces;
 
@@ -25,4 +25,11 @@ public class GuiasController : ControllerBase
     [HttpPost("emitir")]
     public Task<GuiaResponse> Emitir([FromBody] GuiaEmitirRequest req)
         => _service.EmitirAsync(req);
+
+    [HttpPost("{id:int}/anular")]
+    public async Task<IActionResult> Anular(int id)
+    {
+        var ok = await _service.AnularAsync(id);
+        return ok ? Ok(new { ok = true }) : NotFound(new { ok = false, message = "Guía no encontrada o ya anulada." });
+    }
 }

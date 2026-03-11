@@ -25,6 +25,8 @@ public class VehiculoNuevoRepository : IVehiculoNuevoRepository
     {
         using var cn = _cnFactory.CreateConnection();
 
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
+
         // ✅ BD FINAL: incluimos stock con join
         var sql = @"
 SELECT
@@ -76,6 +78,8 @@ ORDER BY v.IdVehiculo DESC;";
     {
         using var cn = _cnFactory.CreateConnection();
 
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
+
         var sql = @"
 SELECT
     v.IdVehiculo,
@@ -116,6 +120,8 @@ WHERE v.IdVehiculo = @IdVehiculo;";
     public async Task<int> CrearAsync(VehiculoNuevoCrearRequest req)
     {
         using var cn = _cnFactory.CreateConnection();
+
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand(SP_UPSERT, cn) { CommandType = CommandType.StoredProcedure };
 
         cmd.Parameters.AddWithValue("@IdVehiculo", DBNull.Value);
@@ -140,6 +146,8 @@ WHERE v.IdVehiculo = @IdVehiculo;";
         if (actual is null) throw new Exception("Vehículo no existe.");
 
         using var cn = _cnFactory.CreateConnection();
+
+	    if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand(SP_UPSERT, cn) { CommandType = CommandType.StoredProcedure };
 
         cmd.Parameters.AddWithValue("@IdVehiculo", idVehiculo);
@@ -163,6 +171,8 @@ WHERE v.IdVehiculo = @IdVehiculo;";
         if (actual is null) throw new Exception("Vehículo no existe.");
 
         using var cn = _cnFactory.CreateConnection();
+
+	    if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand(SP_UPSERT, cn) { CommandType = CommandType.StoredProcedure };
 
         cmd.Parameters.AddWithValue("@IdVehiculo", idVehiculo);
@@ -183,6 +193,8 @@ WHERE v.IdVehiculo = @IdVehiculo;";
     public async Task AplicarMovimientoStockAsync(VehiculoNuevoStockMovimientoRequest req)
     {
         using var cn = _cnFactory.CreateConnection();
+
+	    if (cn.State != ConnectionState.Open) await cn.OpenAsync();
         using var cmd = new SqlCommand(SP_STOCK_MOV, cn) { CommandType = CommandType.StoredProcedure };
 
         cmd.Parameters.AddWithValue("@IdVehiculo", req.IdVehiculo);

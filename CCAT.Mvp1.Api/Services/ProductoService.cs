@@ -1,4 +1,4 @@
-﻿using CCAT.Mvp1.Api.DTOs.Inventario;
+using CCAT.Mvp1.Api.DTOs.Inventario;
 using CCAT.Mvp1.Api.Interfaces;
 
 namespace CCAT.Mvp1.Api.Services;
@@ -31,4 +31,10 @@ public class ProductoService : IProductoService
 
     public Task<ProductoResponse> CambiarEstadoAsync(int productoId, bool activo)
         => _repo.CambiarEstadoAsync(productoId, activo);
+
+    public Task EliminarAsync(int productoId)
+    {
+        if (productoId <= 0) throw new ArgumentException("Id de producto inválido.");
+        return _repo.EliminarAsync(productoId);
+    }
 }

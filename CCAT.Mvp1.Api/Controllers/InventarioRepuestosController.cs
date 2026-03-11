@@ -9,18 +9,18 @@ namespace CCAT.Mvp1.Api.Controllers;
 public class InventarioRepuestosController : ControllerBase
 {
     private readonly IInventarioRepuestoService _service;
+    private readonly IProductoService _productoService;
 
-    public InventarioRepuestosController(IInventarioRepuestoService service)
+    public InventarioRepuestosController(IInventarioRepuestoService service, IProductoService productoService)
     {
         _service = service;
+        _productoService = productoService;
     }
 
-    // GET /api/inventario/repuestos/stock?q=REP-01
     [HttpGet("stock")]
     public Task<List<StockProductoResponse>> Listar([FromQuery] string? q)
         => _service.ListarStockAsync(q);
 
-    // GET /api/inventario/repuestos/stock/1
     [HttpGet("stock/{idProducto:int}")]
     public async Task<IActionResult> Get(int idProducto)
     {
@@ -28,11 +28,18 @@ public class InventarioRepuestosController : ControllerBase
         return item is null ? NotFound() : Ok(item);
     }
 
-    // POST /api/inventario/repuestos/movimiento
     [HttpPost("movimiento")]
     public async Task<IActionResult> Movimiento([FromBody] StockProductoMovimientoRequest req)
     {
         await _service.AplicarMovimientoAsync(req);
         return Ok(new { ok = true });
+    }
+
+    [HttpDelete("{idProducto:int}")]
+    [HttpDelete("stock/{idProducto:int}")]
+    public async Task<IActionResult> Eliminar(int idProducto)
+    {
+        await _productoService.EliminarAsync(idProducto);
+        return Ok(new { mensaje = "Producto eliminado correctamente." });
     }
 }

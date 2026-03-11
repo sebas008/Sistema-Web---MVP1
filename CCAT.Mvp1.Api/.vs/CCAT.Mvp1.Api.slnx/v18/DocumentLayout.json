@@ -1,26 +1,50 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\",
+  "WorkspaceRootPath": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\comprasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\guiasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\guiasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\guiasservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\guiasservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\services\\guiasservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:services\\guiasservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\comprasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\comprasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\proveedorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\proveedorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\facturacionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\facturacionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\rolrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\rolrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\authrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\authrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\authrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\proveedorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\proveedorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,28 +54,43 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 5,
           "Children": [
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ComprasRepository.cs",
-              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ComprasRepository.cs",
-              "RelativeDocumentMoniker": "Repositories\\ComprasRepository.cs",
-              "ToolTip": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ComprasRepository.cs",
-              "RelativeToolTip": "Repositories\\ComprasRepository.cs",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAtwFsAAAAsAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "GuiasService.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Services\\GuiasService.cs",
+              "RelativeDocumentMoniker": "Services\\GuiasService.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Services\\GuiasService.cs",
+              "RelativeToolTip": "Services\\GuiasService.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAwAsAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-24T17:20:02.407Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-09T16:18:03.033Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "GuiasRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\GuiasRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\GuiasRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\GuiasRepository.cs",
+              "RelativeToolTip": "Repositories\\GuiasRepository.cs",
+              "ViewState": "AgIAAGcAAAAAAAAAAAAQwHwAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T16:14:58.409Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "ProveedorRepository.cs",
-              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ProveedorRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ProveedorRepository.cs",
               "RelativeDocumentMoniker": "Repositories\\ProveedorRepository.cs",
-              "ToolTip": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ProveedorRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ProveedorRepository.cs",
               "RelativeToolTip": "Repositories\\ProveedorRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAtwA4AAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -59,39 +98,100 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "AuthController.cs",
-              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Controllers\\AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
-              "ToolTip": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Controllers\\AuthController.cs",
               "RelativeToolTip": "Controllers\\AuthController.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABUAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwBUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-24T04:24:08.374Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAtwD0AAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T04:11:49.687Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GuiasService.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\GuiasService.cs",
+              "RelativeDocumentMoniker": "Repositories\\GuiasService.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\GuiasService.cs",
+              "RelativeToolTip": "Repositories\\GuiasService.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAwBgAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T16:18:32.244Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FacturacionRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\FacturacionRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\FacturacionRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\FacturacionRepository.cs",
+              "RelativeToolTip": "Repositories\\FacturacionRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-06T05:35:17.058Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ComprasRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ComprasRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\ComprasRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ComprasRepository.cs",
+              "RelativeToolTip": "Repositories\\ComprasRepository.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAYwAYAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T17:20:02.407Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "RolRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\RolRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\RolRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\RolRepository.cs",
+              "RelativeToolTip": "Repositories\\RolRepository.cs",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAAwEcAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T10:08:03.11Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "AuthRepository.cs",
-              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\AuthRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\AuthRepository.cs",
               "RelativeDocumentMoniker": "Repositories\\AuthRepository.cs",
-              "ToolTip": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\AuthRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\AuthRepository.cs",
               "RelativeToolTip": "Repositories\\AuthRepository.cs",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAYwF0AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAADUAAAAAAAAAAAApwBcAAABLAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-24T04:15:07.757Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\sebas\\Desktop\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-24T04:11:49.687Z"
+              "DocumentIndex": 6,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-08T17:31:35.982Z"
             }
           ]
         }

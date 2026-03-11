@@ -277,9 +277,13 @@ WHERE IdUsuario=@id;";
         await using var cn = _factory.CreateConnection();
         await cn.OpenAsync();
 
-        // csvRoles: "Admin, Vendedor" etc.
-        var roles = (req.CsvRoles ?? "")
+        // csvRoles:
+        // - El FRONT suele enviar IDs ("1,2")
+        // - También soportamos nombres ("ADMIN,USER")
+        var tokens = (req.CsvRoles ?? "")
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(x => x.Length > 0)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
         // buscamos ids por nombre (case-insensitive)
@@ -294,7 +298,21 @@ WHERE IdUsuario=@id;";
             }
         }
 
-        var ids = roles.Where(r => rolMap.ContainsKey(r)).Select(r => rolMap[r]).Distinct().ToList();
+        var ids = new List<int>();
+        foreach (var t in tokens)
+        {
+            if (int.TryParse(t, out var idRol))
+            {
+                ids.Add(idRol);
+                continue;
+            }
+
+            if (rolMap.TryGetValue(t, out var rid))
+            {
+                ids.Add(rid);
+            }
+        }
+        ids = ids.Distinct().ToList();
 
         // Reemplazamos roles
         await using (var del = new SqlCommand("DELETE FROM seguridad.UsuarioRol WHERE IdUsuario=@id;", (SqlConnection)cn))
@@ -306,8 +324,17 @@ WHERE IdUsuario=@id;";
         foreach (var idRol in ids)
         {
             var ins = @"
-INSERT INTO seguridad.UsuarioRol (IdUsuario, IdRol, FechaCreacion, UsuarioCreacion)
-VALUES (@idUsuario, @idRol, SYSDATETIME(), @usuario);";
+IF COL_LENGTH('seguridad.UsuarioRol','FechaAsignacion') IS NOT NULL
+BEGIN
+  INSERT INTO seguridad.UsuarioRol (IdUsuario, IdRol, FechaAsignacion, UsuarioAsignacion)
+  VALUES (@idUsuario, @idRol, SYSDATETIME(), @usuario);
+END
+ELSE
+BEGIN
+  INSERT INTO seguridad.UsuarioRol (IdUsuario, IdRol, FechaCreacion, UsuarioCreacion)
+  VALUES (@idUsuario, @idRol, SYSDATETIME(), @usuario);
+END
+";
             await using var cmd = new SqlCommand(ins, (SqlConnection)cn);
             cmd.Parameters.AddWithValue("@idUsuario", usuarioId);
             cmd.Parameters.AddWithValue("@idRol", idRol);

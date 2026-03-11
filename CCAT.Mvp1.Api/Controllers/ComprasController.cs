@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using CCAT.Mvp1.Api.DTOs.Contabilidad.Compras;
 using CCAT.Mvp1.Api.Interfaces;
 
@@ -25,4 +25,11 @@ public class ComprasController : ControllerBase
     [HttpPost("registrar")]
     public Task<CompraResponse> Registrar([FromBody] CompraRegistrarRequest req)
         => _service.RegistrarAsync(req);
+
+    [HttpPost("{id:int}/anular")]
+    public async Task<IActionResult> Anular(int id)
+    {
+        var ok = await _service.AnularAsync(id);
+        return ok ? Ok(new { ok = true, mensaje = "Compra anulada correctamente." }) : NotFound();
+    }
 }

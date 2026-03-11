@@ -1,4 +1,4 @@
-﻿//using CCAT.Mvp1.Api.DTOs.Contabilidad.Guias;
+//using CCAT.Mvp1.Api.DTOs.Contabilidad.Guias;
 //using CCAT.Mvp1.Api.Interfaces;
 
 //namespace CCAT.Mvp1.Api.Services;
@@ -22,4 +22,6 @@
 //    public Task<GuiaResponse?> ObtenerPorIdAsync(int idGuia) => _repo.ObtenerPorIdAsync(idGuia);
 
 //    public Task<List<GuiaResponse>> ListarAsync(string? q) => _repo.ListarAsync(q);
+
+//    public Task<bool> AnularAsync(int idGuia) => _repo.AnularAsync(idGuia);
 //}

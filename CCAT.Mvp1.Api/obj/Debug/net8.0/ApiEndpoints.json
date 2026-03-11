@@ -194,6 +194,22 @@
   },
   {
     "ContainingType": "CCAT.Mvp1.Api.Controllers.ComprasController",
+    "Method": "Anular",
+    "RelativePath": "api/contabilidad/compras/{id}/anular",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CCAT.Mvp1.Api.Controllers.ComprasController",
     "Method": "Registrar",
     "RelativePath": "api/contabilidad/compras/registrar",
     "HttpMethod": "POST",
@@ -262,6 +278,22 @@
   },
   {
     "ContainingType": "CCAT.Mvp1.Api.Controllers.FacturacionController",
+    "Method": "Anular",
+    "RelativePath": "api/contabilidad/facturas/{id}/anular",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CCAT.Mvp1.Api.Controllers.FacturacionController",
     "Method": "Emitir",
     "RelativePath": "api/contabilidad/facturas/emitir",
     "HttpMethod": "POST",
@@ -317,6 +349,22 @@
     "Method": "Obtener",
     "RelativePath": "api/contabilidad/guias/{id}",
     "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CCAT.Mvp1.Api.Controllers.GuiasController",
+    "Method": "Anular",
+    "RelativePath": "api/contabilidad/guias/{id}/anular",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -460,6 +508,22 @@
   },
   {
     "ContainingType": "CCAT.Mvp1.Api.Controllers.InventarioRepuestosController",
+    "Method": "Eliminar",
+    "RelativePath": "api/inventario/repuestos/{idProducto}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idProducto",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CCAT.Mvp1.Api.Controllers.InventarioRepuestosController",
     "Method": "Movimiento",
     "RelativePath": "api/inventario/repuestos/movimiento",
     "HttpMethod": "POST",
@@ -505,6 +569,22 @@
     "Method": "Get",
     "RelativePath": "api/inventario/repuestos/stock/{idProducto}",
     "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idProducto",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CCAT.Mvp1.Api.Controllers.InventarioRepuestosController",
+    "Method": "Eliminar",
+    "RelativePath": "api/inventario/repuestos/stock/{idProducto}",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -775,6 +855,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "CCAT.Mvp1.Api.Controllers.ProductosController",
+    "Method": "Eliminar",
+    "RelativePath": "api/Productos/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "CCAT.Mvp1.Api.Controllers.ProductosController",
