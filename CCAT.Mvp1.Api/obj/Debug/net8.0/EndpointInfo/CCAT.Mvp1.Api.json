@@ -2609,9 +2609,113 @@
         },
         "additionalProperties": false
       },
+      "GuiaDetalleItemRequest": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tipo": {
+            "type": "string",
+            "nullable": true
+          },
+          "idProducto": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idVehiculo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GuiaDetalleItemResponse": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tipo": {
+            "type": "string",
+            "nullable": true
+          },
+          "idProducto": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idVehiculo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "GuiaEmitirRequest": {
         "type": "object",
         "properties": {
+          "serie": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipo": {
+            "type": "string",
+            "nullable": true
+          },
+          "motivoTraslado": {
+            "type": "string",
+            "nullable": true
+          },
+          "puntoPartida": {
+            "type": "string",
+            "nullable": true
+          },
+          "puntoLlegada": {
+            "type": "string",
+            "nullable": true
+          },
+          "afectaStock": {
+            "type": "boolean"
+          },
+          "detalle": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuiaDetalleItemRequest"
+            },
+            "nullable": true
+          },
+          "usuario": {
+            "type": "string",
+            "nullable": true
+          },
           "idCliente": {
             "type": "integer",
             "format": "int32"
@@ -2619,10 +2723,6 @@
           "fecha": {
             "type": "string",
             "format": "date-time",
-            "nullable": true
-          },
-          "usuario": {
-            "type": "string",
             "nullable": true
           },
           "detalleJson": {
@@ -2647,12 +2747,40 @@
             "type": "string",
             "format": "date-time"
           },
+          "tipo": {
+            "type": "string",
+            "nullable": true
+          },
           "estado": {
             "type": "string",
             "nullable": true
           },
+          "motivoTraslado": {
+            "type": "string",
+            "nullable": true
+          },
+          "puntoPartida": {
+            "type": "string",
+            "nullable": true
+          },
+          "puntoLlegada": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "destino": {
             "type": "string",
+            "nullable": true
+          },
+          "detalle": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuiaDetalleItemResponse"
+            },
             "nullable": true
           }
         },
@@ -3313,7 +3441,8 @@
           },
           "anio": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "version": {
             "type": "string",
@@ -3325,9 +3454,149 @@
           },
           "precioLista": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
+          },
+          "activo": {
+            "type": "boolean"
           },
           "usuario": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigoExterno": {
+            "type": "string",
+            "nullable": true
+          },
+          "modeloLegal": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "precioCompra": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioVenta": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoTransmision": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorExterior": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorInterior": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroAsientos": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numeroPuertas": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "cilindrajeCc": {
+            "type": "string",
+            "nullable": true
+          },
+          "potenciaHp": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoCombustible": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroMotor": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroChasis": {
+            "type": "string",
+            "nullable": true
+          },
+          "modeloTecnico": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigoSap": {
+            "type": "string",
+            "nullable": true
+          },
+          "pesoBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cargaUtil": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "estadoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "ubicacion": {
+            "type": "string",
+            "nullable": true
+          },
+          "seccionAsignada": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaIngreso": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "catalitico": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tipoCatalitico": {
+            "type": "string",
+            "nullable": true
+          },
+          "bonoUsd": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pagado": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "testDrive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "unidadTestDrive": {
+            "type": "string",
+            "nullable": true
+          },
+          "km0": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "observacion": {
             "type": "string",
             "nullable": true
           }
@@ -3364,7 +3633,8 @@
           },
           "anio": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "version": {
             "type": "string",
@@ -3376,12 +3646,149 @@
           },
           "precioLista": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "activo": {
             "type": "boolean"
           },
           "usuario": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigoExterno": {
+            "type": "string",
+            "nullable": true
+          },
+          "modeloLegal": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "precioCompra": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioVenta": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoTransmision": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorExterior": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorInterior": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroAsientos": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numeroPuertas": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "cilindrajeCc": {
+            "type": "string",
+            "nullable": true
+          },
+          "potenciaHp": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoCombustible": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroMotor": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroChasis": {
+            "type": "string",
+            "nullable": true
+          },
+          "modeloTecnico": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigoSap": {
+            "type": "string",
+            "nullable": true
+          },
+          "pesoBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cargaUtil": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "estadoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "ubicacion": {
+            "type": "string",
+            "nullable": true
+          },
+          "seccionAsignada": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaIngreso": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "catalitico": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tipoCatalitico": {
+            "type": "string",
+            "nullable": true
+          },
+          "bonoUsd": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pagado": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "testDrive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "unidadTestDrive": {
+            "type": "string",
+            "nullable": true
+          },
+          "km0": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "observacion": {
             "type": "string",
             "nullable": true
           }
@@ -3429,6 +3836,142 @@
           "stockActual": {
             "type": "number",
             "format": "double"
+          },
+          "codigoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigoExterno": {
+            "type": "string",
+            "nullable": true
+          },
+          "modeloLegal": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "precioCompra": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioVenta": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoTransmision": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorExterior": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorInterior": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroAsientos": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numeroPuertas": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "cilindrajeCc": {
+            "type": "string",
+            "nullable": true
+          },
+          "potenciaHp": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoCombustible": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroMotor": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroChasis": {
+            "type": "string",
+            "nullable": true
+          },
+          "modeloTecnico": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigoSap": {
+            "type": "string",
+            "nullable": true
+          },
+          "pesoBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cargaUtil": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "estadoVehiculo": {
+            "type": "string",
+            "nullable": true
+          },
+          "ubicacion": {
+            "type": "string",
+            "nullable": true
+          },
+          "seccionAsignada": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaIngreso": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "catalitico": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tipoCatalitico": {
+            "type": "string",
+            "nullable": true
+          },
+          "bonoUsd": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pagado": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "testDrive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "unidadTestDrive": {
+            "type": "string",
+            "nullable": true
+          },
+          "km0": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "observacion": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

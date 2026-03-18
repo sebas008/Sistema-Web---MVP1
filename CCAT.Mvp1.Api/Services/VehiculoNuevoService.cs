@@ -23,10 +23,7 @@ public class VehiculoNuevoService : IVehiculoNuevoService
 
     public async Task<VehiculoNuevoResponse> CrearAsync(VehiculoNuevoCrearRequest req)
     {
-        if (string.IsNullOrWhiteSpace(req.Marca)) throw new ArgumentException("Marca obligatoria.");
-        if (string.IsNullOrWhiteSpace(req.Modelo)) throw new ArgumentException("Modelo obligatorio.");
-        if (req.Anio <= 1900) throw new ArgumentException("Año inválido.");
-        if (req.PrecioLista < 0) throw new ArgumentException("Precio inválido.");
+        Validar(req);
 
         var id = await _repo.CrearAsync(req);
         return (await _repo.ObtenerPorIdAsync(id)) ?? throw new Exception("No se pudo leer el vehículo creado.");
@@ -35,6 +32,8 @@ public class VehiculoNuevoService : IVehiculoNuevoService
     public async Task<VehiculoNuevoResponse> ActualizarAsync(int idVehiculo, VehiculoNuevoActualizarRequest req)
     {
         if (idVehiculo <= 0) throw new ArgumentException("IdVehiculo inválido.");
+        Validar(req);
+
         var id = await _repo.ActualizarAsync(idVehiculo, req);
         return (await _repo.ObtenerPorIdAsync(id)) ?? throw new Exception("No se pudo leer el vehículo actualizado.");
     }
@@ -57,5 +56,19 @@ public class VehiculoNuevoService : IVehiculoNuevoService
         if (string.IsNullOrWhiteSpace(req.Referencia)) req.Referencia = "API";
 
         return _repo.AplicarMovimientoStockAsync(req);
+    }
+
+    private static void Validar(VehiculoNuevoCrearRequest req)
+    {
+        if (string.IsNullOrWhiteSpace(req.Marca)) throw new ArgumentException("Marca obligatoria.");
+        if (string.IsNullOrWhiteSpace(req.Modelo)) throw new ArgumentException("Modelo obligatorio.");
+
+        var anio = req.Anio ?? 0;
+        if (anio > 0 && anio < 1900) throw new ArgumentException("Año inválido.");
+
+        if ((req.PrecioLista ?? 0) < 0) throw new ArgumentException("Precio lista inválido.");
+        if ((req.PrecioCompra ?? 0) < 0) throw new ArgumentException("Precio compra inválido.");
+        if ((req.PrecioVenta ?? 0) < 0) throw new ArgumentException("Precio venta inválido.");
+        if ((req.BonoUsd ?? 0) < 0) throw new ArgumentException("Bono inválido.");
     }
 }
