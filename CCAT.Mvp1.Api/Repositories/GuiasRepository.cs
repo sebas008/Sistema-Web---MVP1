@@ -42,11 +42,11 @@ public class GuiasRepository : IGuiasRepository
         if (cn.State != ConnectionState.Open)
             await cn.OpenAsync();
 
-        if (await TableExistsAsync(cn, "contabilidad", "Guia"))
-            return await ObtenerPorIdDirectoAsync(cn, idGuia);
-
         if (await ProcedureExistsAsync(cn, "contabilidad", "usp_Guia_Get"))
             return await ObtenerPorIdConSpAsync(cn, idGuia);
+
+        if (await TableExistsAsync(cn, "contabilidad", "Guia"))
+            return await ObtenerPorIdDirectoAsync(cn, idGuia);
 
         return null;
     }
@@ -57,11 +57,11 @@ public class GuiasRepository : IGuiasRepository
         if (cn.State != ConnectionState.Open)
             await cn.OpenAsync();
 
-        if (await TableExistsAsync(cn, "contabilidad", "Guia"))
-            return await ListarDirectoAsync(cn, q);
-
         if (await ProcedureExistsAsync(cn, "contabilidad", "usp_Guia_List"))
             return await ListarConSpAsync(cn, q);
+
+        if (await TableExistsAsync(cn, "contabilidad", "Guia"))
+            return await ListarDirectoAsync(cn, q);
 
         return new List<GuiaResponse>();
     }
@@ -72,6 +72,21 @@ public class GuiasRepository : IGuiasRepository
         if (cn.State != ConnectionState.Open)
             await cn.OpenAsync();
 
+        if (await ProcedureExistsAsync(cn, "contabilidad", "usp_Guia_Anular"))
+        {
+            using var cmdSp = new SqlCommand("contabilidad.usp_Guia_Anular", cn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmdSp.Parameters.AddWithValue("@IdGuia", idGuia);
+
+            var result = await cmdSp.ExecuteScalarAsync();
+            if (result == null || result == DBNull.Value)
+                return true;
+
+            return Convert.ToInt32(result) > 0;
+        }
+
         if (!await TableExistsAsync(cn, "contabilidad", "Guia"))
             throw new InvalidOperationException("No existe la tabla contabilidad.Guia para anular registros.");
 
@@ -79,7 +94,13 @@ public class GuiasRepository : IGuiasRepository
         if (!guiaCols.Contains("Estado"))
             throw new InvalidOperationException("La tabla contabilidad.Guia no tiene la columna Estado.");
 
-        var sql = "UPDATE contabilidad.Guia SET Estado = 'ANULADA' WHERE IdGuia = @IdGuia AND ISNULL(Estado, '') <> 'ANULADA';";
+        var setParts = new List<string> { "Estado = 'ANULADA'" };
+        if (guiaCols.Contains("FechaActualizacion")) setParts.Add("FechaActualizacion = SYSDATETIME()");
+        if (guiaCols.Contains("UsuarioActualizacion")) setParts.Add("UsuarioActualizacion = 'admin'");
+        if (guiaCols.Contains("FechaAnulacion")) setParts.Add("FechaAnulacion = SYSDATETIME()");
+        if (guiaCols.Contains("UsuarioAnulacion")) setParts.Add("UsuarioAnulacion = 'admin'");
+
+        var sql = $"UPDATE contabilidad.Guia SET {string.Join(", ", setParts)} WHERE IdGuia = @IdGuia AND ISNULL(Estado, '') <> 'ANULADA'";
 
         using var cmd = new SqlCommand(sql, cn);
         cmd.Parameters.AddWithValue("@IdGuia", idGuia);
