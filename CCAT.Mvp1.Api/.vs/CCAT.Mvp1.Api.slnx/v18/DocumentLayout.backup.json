@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\comprasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\comprasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\inventariorepuestorepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\inventariorepuestorepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -21,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\comprasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|solutionrelative:repositories\\comprasrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2B29418B-50FC-8141-70F5-0F0332521001}|CCAT.Mvp1.Api.csproj|c:\\users\\sebas\\desktop\\mvp1\\sistemawebmvp1_back\\sistema-web---mvp1\\ccat.mvp1.api\\repositories\\facturacionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -54,23 +58,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UsuarioRepository.cs",
-              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\UsuarioRepository.cs",
-              "RelativeDocumentMoniker": "Repositories\\UsuarioRepository.cs",
-              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\UsuarioRepository.cs",
-              "RelativeToolTip": "Repositories\\UsuarioRepository.cs",
-              "ViewState": "AgIAADgBAAAAAAAAAAAiwPMBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:00:39.03Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -82,7 +74,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -94,7 +86,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "FacturacionRepository.cs",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\FacturacionRepository.cs",
               "RelativeDocumentMoniker": "Repositories\\FacturacionRepository.cs",
@@ -107,6 +99,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "ComprasRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ComprasRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\ComprasRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ComprasRepository.cs",
+              "RelativeToolTip": "Repositories\\ComprasRepository.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAtwCMAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T17:20:02.407Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "InventarioRepuestoRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\InventarioRepuestoRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\InventarioRepuestoRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\InventarioRepuestoRepository.cs",
+              "RelativeToolTip": "Repositories\\InventarioRepuestoRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-21T03:00:52.931Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -119,7 +137,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
+              "Title": "UsuarioRepository.cs",
+              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\UsuarioRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\UsuarioRepository.cs",
+              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\UsuarioRepository.cs",
+              "RelativeToolTip": "Repositories\\UsuarioRepository.cs",
+              "ViewState": "AgIAADgBAAAAAAAAAAAiwPMBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-20T05:00:39.03Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "GuiasRepository.cs",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\GuiasRepository.cs",
               "RelativeDocumentMoniker": "Repositories\\GuiasRepository.cs",
@@ -131,7 +161,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "GuiasService.cs",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Services\\GuiasService.cs",
               "RelativeDocumentMoniker": "Services\\GuiasService.cs",
@@ -143,7 +173,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "ProveedorRepository.cs",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ProveedorRepository.cs",
               "RelativeDocumentMoniker": "Repositories\\ProveedorRepository.cs",
@@ -155,19 +185,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ComprasRepository.cs",
-              "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ComprasRepository.cs",
-              "RelativeDocumentMoniker": "Repositories\\ComprasRepository.cs",
-              "ToolTip": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\ComprasRepository.cs",
-              "RelativeToolTip": "Repositories\\ComprasRepository.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAYwAYAAAAlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-24T17:20:02.407Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "RolRepository.cs",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\RolRepository.cs",
               "RelativeDocumentMoniker": "Repositories\\RolRepository.cs",
@@ -179,7 +197,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "AuthRepository.cs",
               "DocumentMoniker": "C:\\Users\\sebas\\Desktop\\MVP1\\SistemaWebMvp1_Back\\Sistema-Web---MVP1\\CCAT.Mvp1.Api\\Repositories\\AuthRepository.cs",
               "RelativeDocumentMoniker": "Repositories\\AuthRepository.cs",

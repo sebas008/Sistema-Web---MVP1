@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using Microsoft.Data.SqlClient;
 using CCAT.Mvp1.Api.DTOs.Inventario;
 using CCAT.Mvp1.Api.Interfaces;
@@ -9,8 +9,6 @@ public class InventarioRepuestoRepository : IInventarioRepuestoRepository
 {
     private readonly IDbConnectionFactory _cnFactory;
 
-    // ✅ BD FINAL
-    private const string SP_STOCK_GET = "inventario.usp_Stock_Get";
     private const string SP_STOCK_MOV = "inventario.usp_Stock_AplicarMovimiento";
 
     public InventarioRepuestoRepository(IDbConnectionFactory cnFactory)
@@ -23,12 +21,9 @@ public class InventarioRepuestoRepository : IInventarioRepuestoRepository
 
     public async Task<List<StockProductoResponse>> ListarStockAsync(string? q)
     {
-        using var cn = _cnFactory.CreateConnection();
-
-        // Defensa: evita ejecutar comandos con conexión cerrada.
+        await using var cn = _cnFactory.CreateConnection();
         if (cn.State != ConnectionState.Open) await cn.OpenAsync();
 
-        // ✅ BD FINAL: no existe usp_StockProducto_List, se arma con join Producto + Stock
         var sql = @"
 SELECT
     p.IdProducto,
@@ -36,21 +31,34 @@ SELECT
     p.TipoProducto,
     ISNULL(p.Codigo,'') AS Codigo,
     p.Precio,
-    CAST(ISNULL(s.CantidadActual, 0) AS DECIMAL(18,2)) AS Stock,
-    s.Referencia,
-    s.FechaActualizacion
+    CAST(COALESCE(s.CantidadActual, sm.StockCalculado, 0) AS DECIMAL(18,2)) AS Stock,
+    COALESCE(s.Referencia, sm.Referencia) AS Referencia,
+    COALESCE(s.FechaActualizacion, sm.FechaMovimiento) AS FechaActualizacion
 FROM inventario.Producto p
-LEFT JOIN inventario.Stock s ON s.IdProducto = p.IdProducto
-WHERE
-    (@Q IS NULL OR @Q = '' OR p.Nombre LIKE '%' + @Q + '%' OR p.Codigo LIKE '%' + @Q + '%')
+LEFT JOIN inventario.Stock s 
+    ON s.IdProducto = p.IdProducto
+OUTER APPLY (
+    SELECT
+        SUM(CASE WHEN sm.TipoMovimiento = 'IN' THEN sm.Cantidad ELSE -sm.Cantidad END) AS StockCalculado,
+        MAX(sm.Referencia) AS Referencia,
+        MAX(sm.FechaMovimiento) AS FechaMovimiento
+    FROM inventario.StockMovimiento sm
+    WHERE sm.IdProducto = p.IdProducto
+) sm
+WHERE p.Activo = 1
+  AND (
+        @q IS NULL
+        OR p.Nombre LIKE '%' + @q + '%'
+        OR ISNULL(p.Codigo,'') LIKE '%' + @q + '%'
+        OR ISNULL(p.TipoProducto,'') LIKE '%' + @q + '%'
+      )
 ORDER BY p.IdProducto DESC;";
 
-        using var cmd = new SqlCommand(sql, cn) { CommandType = CommandType.Text };
-        cmd.Parameters.AddWithValue("@Q", DbOrNull(q));
+        await using var cmd = new SqlCommand(sql, (SqlConnection)cn);
+        cmd.Parameters.AddWithValue("@q", DbOrNull(q));
 
         var list = new List<StockProductoResponse>();
-        using var rd = await cmd.ExecuteReaderAsync();
-
+        await using var rd = await cmd.ExecuteReaderAsync();
         while (await rd.ReadAsync())
         {
             list.Add(new StockProductoResponse
@@ -71,9 +79,9 @@ ORDER BY p.IdProducto DESC;";
 
     public async Task<StockProductoResponse?> ObtenerStockAsync(int idProducto)
     {
-        using var cn = _cnFactory.CreateConnection();
+        await using var cn = _cnFactory.CreateConnection();
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
 
-        // ✅ BD FINAL: armamos Producto + Stock con join (más estable que depender solo del SP)
         var sql = @"
 SELECT
     p.IdProducto,
@@ -81,17 +89,26 @@ SELECT
     p.TipoProducto,
     ISNULL(p.Codigo,'') AS Codigo,
     p.Precio,
-    CAST(ISNULL(s.CantidadActual, 0) AS DECIMAL(18,2)) AS Stock,
-    s.Referencia,
-    s.FechaActualizacion
+    CAST(COALESCE(s.CantidadActual, sm.StockCalculado, 0) AS DECIMAL(18,2)) AS Stock,
+    COALESCE(s.Referencia, sm.Referencia) AS Referencia,
+    COALESCE(s.FechaActualizacion, sm.FechaMovimiento) AS FechaActualizacion
 FROM inventario.Producto p
-LEFT JOIN inventario.Stock s ON s.IdProducto = p.IdProducto
+LEFT JOIN inventario.Stock s 
+    ON s.IdProducto = p.IdProducto
+OUTER APPLY (
+    SELECT
+        SUM(CASE WHEN sm.TipoMovimiento = 'IN' THEN sm.Cantidad ELSE -sm.Cantidad END) AS StockCalculado,
+        MAX(sm.Referencia) AS Referencia,
+        MAX(sm.FechaMovimiento) AS FechaMovimiento
+    FROM inventario.StockMovimiento sm
+    WHERE sm.IdProducto = p.IdProducto
+) sm
 WHERE p.IdProducto = @IdProducto;";
 
-        using var cmd = new SqlCommand(sql, cn) { CommandType = CommandType.Text };
+        await using var cmd = new SqlCommand(sql, (SqlConnection)cn);
         cmd.Parameters.AddWithValue("@IdProducto", idProducto);
 
-        using var rd = await cmd.ExecuteReaderAsync();
+        await using var rd = await cmd.ExecuteReaderAsync();
         if (!await rd.ReadAsync()) return null;
 
         return new StockProductoResponse
@@ -109,14 +126,22 @@ WHERE p.IdProducto = @IdProducto;";
 
     public async Task AplicarMovimientoAsync(StockProductoMovimientoRequest req)
     {
-        using var cn = _cnFactory.CreateConnection();
-        using var cmd = new SqlCommand(SP_STOCK_MOV, cn) { CommandType = CommandType.StoredProcedure };
+        await using var cn = _cnFactory.CreateConnection();
+        if (cn.State != ConnectionState.Open) await cn.OpenAsync();
+
+        await using var cmd = new SqlCommand(SP_STOCK_MOV, (SqlConnection)cn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
 
         cmd.Parameters.AddWithValue("@IdProducto", req.IdProducto);
-        cmd.Parameters.AddWithValue("@TipoMovimiento", MapTipo(req.TipoMovimiento)); // BD final espera IN/OUT (CHAR(3))
+        cmd.Parameters.AddWithValue("@TipoMovimiento", MapTipo(req.TipoMovimiento));
         cmd.Parameters.AddWithValue("@Cantidad", req.Cantidad);
         cmd.Parameters.AddWithValue("@Referencia", DbOrNull(req.Referencia));
-        cmd.Parameters.AddWithValue("@Observacion", req.TipoMovimiento.Trim().ToUpperInvariant() == "AJUSTE" ? "AJUSTE" : DBNull.Value);
+        cmd.Parameters.AddWithValue("@Observacion",
+            (req.TipoMovimiento ?? "").Trim().ToUpperInvariant() == "AJUSTE"
+                ? "AJUSTE"
+                : DBNull.Value);
         cmd.Parameters.AddWithValue("@Usuario", DbOrNull(req.Usuario));
 
         await cmd.ExecuteNonQueryAsync();

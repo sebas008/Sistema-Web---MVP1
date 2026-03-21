@@ -30,6 +30,18 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
         cmd.Parameters.AddWithValue("@usuario", "admin");
 
         var newId = (int)(await cmd.ExecuteScalarAsync() ?? 0);
+
+        var sqlStock = @"
+IF NOT EXISTS (SELECT 1 FROM inventario.Stock WHERE IdProducto = @id)
+    INSERT INTO inventario.Stock (IdProducto, CantidadActual, Referencia, FechaActualizacion, UsuarioActualizacion)
+    VALUES (@id, 0, NULL, SYSDATETIME(), @usuario);";
+        await using (var cmdStock = new SqlCommand(sqlStock, (SqlConnection)cn))
+        {
+            cmdStock.Parameters.AddWithValue("@id", newId);
+            cmdStock.Parameters.AddWithValue("@usuario", "admin");
+            await cmdStock.ExecuteNonQueryAsync();
+        }
+
         var created = await ObtenerPorIdAsync(newId);
         return created ?? throw new Exception("No se pudo obtener el producto creado.");
     }

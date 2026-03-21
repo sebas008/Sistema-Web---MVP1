@@ -58,7 +58,18 @@ SELECT
     p.RazonSocial AS Proveedor
 FROM contabilidad.Compra c
 INNER JOIN contabilidad.Proveedor p ON p.IdProveedor = c.IdProveedor
-WHERE c.IdCompra = @IdCompra;";
+WHERE c.IdCompra = @IdCompra;
+
+SELECT
+    d.Item,
+    d.IdProducto,
+    d.Descripcion,
+    d.Cantidad,
+    d.PrecioUnitario,
+    d.Importe
+FROM contabilidad.CompraDetalle d
+WHERE d.IdCompra = @IdCompra
+ORDER BY d.Item;";
 
         using var cmd = new SqlCommand(sql, (SqlConnection)cn);
         cmd.Parameters.AddWithValue("@IdCompra", idCompra);
@@ -66,15 +77,34 @@ WHERE c.IdCompra = @IdCompra;";
         using var rd = await cmd.ExecuteReaderAsync();
         if (!await rd.ReadAsync()) return null;
 
-        return new CompraResponse
+        var compra = new CompraResponse
         {
             IdCompra = SafeGetInt(rd, "IdCompra"),
             Numero = SafeGetString(rd, "Numero") ?? "",
             Fecha = SafeGetDateTime(rd, "Fecha") ?? DateTime.UtcNow,
             Total = SafeGetDecimal(rd, "Total") ?? 0m,
             Estado = SafeGetString(rd, "Estado") ?? "REGISTRADA",
-            Proveedor = SafeGetString(rd, "Proveedor")
+            Proveedor = SafeGetString(rd, "Proveedor"),
+            Detalle = new List<CompraDetalleItemDto>()
         };
+
+        if (await rd.NextResultAsync())
+        {
+            while (await rd.ReadAsync())
+            {
+                compra.Detalle.Add(new CompraDetalleItemDto
+                {
+                    Item = SafeGetNullableInt(rd, "Item"),
+                    IdProducto = SafeGetNullableInt(rd, "IdProducto"),
+                    Descripcion = SafeGetString(rd, "Descripcion"),
+                    Cantidad = SafeGetDecimal(rd, "Cantidad") ?? 0m,
+                    PrecioUnitario = SafeGetDecimal(rd, "PrecioUnitario") ?? 0m,
+                    Importe = SafeGetDecimal(rd, "Importe") ?? 0m
+                });
+            }
+        }
+
+        return compra;
     }
 
     public async Task<List<CompraResponse>> ListarAsync(string? q)
@@ -141,7 +171,6 @@ WHERE IdCompra = @IdCompra
 
     private static DataTable BuildDetalleTvp(List<DetalleItemDto> detalle)
     {
-        // Debe coincidir exactamente con contabilidad.TVP_DetalleItem (7 columnas)
         var dt = new DataTable();
         dt.Columns.Add("Item", typeof(int));
         dt.Columns.Add("TipoItem", typeof(string));
@@ -168,16 +197,19 @@ WHERE IdCompra = @IdCompra
     }
 
     private static int SafeGetInt(SqlDataReader rd, string col)
-        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? rd.GetInt32(rd.GetOrdinal(col)) : 0;
+        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? Convert.ToInt32(rd.GetValue(rd.GetOrdinal(col))) : 0;
+
+    private static int? SafeGetNullableInt(SqlDataReader rd, string col)
+        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? Convert.ToInt32(rd.GetValue(rd.GetOrdinal(col))) : null;
 
     private static string? SafeGetString(SqlDataReader rd, string col)
-        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? rd.GetString(rd.GetOrdinal(col)) : null;
+        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? Convert.ToString(rd.GetValue(rd.GetOrdinal(col))) : null;
 
     private static DateTime? SafeGetDateTime(SqlDataReader rd, string col)
-        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? rd.GetDateTime(rd.GetOrdinal(col)) : null;
+        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? Convert.ToDateTime(rd.GetValue(rd.GetOrdinal(col))) : null;
 
     private static decimal? SafeGetDecimal(SqlDataReader rd, string col)
-        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? rd.GetDecimal(rd.GetOrdinal(col)) : null;
+        => HasCol(rd, col) && !rd.IsDBNull(rd.GetOrdinal(col)) ? Convert.ToDecimal(rd.GetValue(rd.GetOrdinal(col))) : null;
 
     private static bool HasCol(SqlDataReader rd, string col)
     {

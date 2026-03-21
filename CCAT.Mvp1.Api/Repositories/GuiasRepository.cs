@@ -250,7 +250,7 @@ public class GuiasRepository : IGuiasRepository
         using var rd = await cmd.ExecuteReaderAsync();
         if (!await rd.ReadAsync()) return null;
 
-        return new GuiaResponse
+        var guia = new GuiaResponse
         {
             IdGuia = SafeGetInt(rd, "IdGuia"),
             Numero = SafeGetString(rd, "Numero") ?? SafeGetString(rd, "Referencia") ?? string.Empty,
@@ -260,8 +260,28 @@ public class GuiasRepository : IGuiasRepository
             MotivoTraslado = SafeGetString(rd, "MotivoTraslado") ?? SafeGetString(rd, "Motivo"),
             PuntoPartida = SafeGetString(rd, "PuntoPartida"),
             PuntoLlegada = SafeGetString(rd, "PuntoLlegada"),
-            Destino = SafeGetString(rd, "Destino") ?? SafeGetString(rd, "Cliente")
+            Destino = SafeGetString(rd, "Destino") ?? SafeGetString(rd, "Cliente"),
+            Detalle = new List<GuiaDetalleItemResponse>()
         };
+
+        if (await rd.NextResultAsync())
+        {
+            while (await rd.ReadAsync())
+            {
+                guia.Detalle!.Add(new GuiaDetalleItemResponse
+                {
+                    Item = SafeGetNullableInt(rd, "Item"),
+                    Tipo = SafeGetString(rd, "Tipo"),
+                    IdProducto = SafeGetNullableInt(rd, "IdProducto"),
+                    IdVehiculo = SafeGetNullableInt(rd, "IdVehiculo"),
+                    Descripcion = SafeGetString(rd, "Descripcion") ?? string.Empty,
+                    Cantidad = SafeGetDecimal(rd, "Cantidad") ?? 0m
+                });
+            }
+        }
+
+        guia.TotalItems = guia.Detalle?.Count ?? 0;
+        return guia;
     }
 
     private async Task<GuiaResponse?> ObtenerPorIdDirectoAsync(SqlConnection cn, int idGuia)

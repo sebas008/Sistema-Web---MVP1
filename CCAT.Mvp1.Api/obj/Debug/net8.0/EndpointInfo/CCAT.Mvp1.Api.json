@@ -2407,6 +2407,39 @@
         },
         "additionalProperties": false
       },
+      "CompraDetalleItemDto": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idProducto": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double"
+          },
+          "precioUnitario": {
+            "type": "number",
+            "format": "double"
+          },
+          "importe": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CompraRegistrarRequest": {
         "type": "object",
         "properties": {
@@ -2468,6 +2501,13 @@
           },
           "proveedor": {
             "type": "string",
+            "nullable": true
+          },
+          "detalle": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompraDetalleItemDto"
+            },
             "nullable": true
           }
         },
